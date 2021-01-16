@@ -7,8 +7,13 @@ module.exports = { listen, handler }
 
 // listen(port: int)
 // create server and listen on port
-function listen (port) {
-  return new Promise(resolve => http.createServer((req, res) => {
+async function listen (port) {
+  try {
+    await mongodb.connect('mongodb+srv://ning:vDeS2UfYFwymOuVa@htn.uttoz.mongodb.net/covid?retryWrites=true&w=majority')
+  } catch (err) {
+    console.log(err)
+  }
+  await new Promise(resolve => http.createServer((req, res) => {
     try {
       handler(req, res)
     } catch (err) {
@@ -38,12 +43,7 @@ function handler (req, res) {
 
 function get (url) {
   // resolve url request
+
 }
 
-mongodb.connect('mongodb+srv://ning:vDeS2UfYFwymOuVa@htn.uttoz.mongodb.net/covid?retryWrites=true&w=majority')
-  .then(client => {
-    console.log('Connected!')
-  })
-  .catch(err => {
-    console.log(err)
-  })
+
