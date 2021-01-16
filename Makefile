@@ -1,7 +1,7 @@
 # GNU Make 3.8.2 and above
 
 MAKEFLAGS += --no-print-directory
-.PHONY: all start clean html css js assets
+
 
 .EXPORT_ALL_VARIABLES:
 
@@ -45,3 +45,6 @@ js:
 assets:
 	rm -rf public/assets
 	cp -R src/assets public/assets
+
+test:
+	echo $(PATH)
