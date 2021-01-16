@@ -22,40 +22,39 @@ document.body.appendChild(renderer.domElement)
 const camera = new THREE.PerspectiveCamera()
 camera.aspect = window.outerWidth / window.innerHeight
 camera.updateProjectionMatrix()
-camera.position.z = 500
+camera.position.z = 400
 
 const globe = new ThreeGlobe()
   .globeImageUrl('//unpkg.com/three-globe/example/img/earth-water.png')
   .polygonsData(data.features)
   .polygonCapColor((country) => {
-    for (i = 0; i < covid.length; i++) {
-      if (country.properties.ISO_A3 == covid[i].ISO_A3) {
-        let intensity = covid[i].intensity;
+    for (let i = 0; i < covid.length; i++) {
+      if (country.properties.ISO_A3 === covid[i].ISO_A3) {
+        const intensity = covid[i].intensity
         if (intensity < 0.25) {
-          return 'rgba(0, 255, 0, 1)';
+          return 'rgba(0, 255, 0, 1)'
         } else if (intensity < 0.75) {
-          return 'rgba(255, 255, 0, 1)';
+          return 'rgba(255, 255, 0, 1)'
         } else {
-          return 'rgba(255, 0, 0, 1)';
+          return 'rgba(255, 0, 0, 1)'
         }
       }
     }
-    return 'rgba(255, 0, 0, 1)';
+    return 'rgba(255, 0, 0, 1)'
   })
-  .polygonStrokeColor(() => 'rgba(0, 0, 0, 0.25)')
-  .polygonSideColor(() => 'rgba(200, 200, 200, 1)')
+  .polygonStrokeColor(() => '#386781')
+  .polygonSideColor(() => '#ace4f9')
   .polygonAltitude(0.01)
   .polygonsTransitionDuration(0)
   .showAtmosphere(false)
   // .showGraticules(true)
 
-  const globeMaterial = globe.globeMaterial();
-    globeMaterial.bumpScale = 10;
-    new THREE.TextureLoader().load('//unpkg.com/three-globe/example/img/earth-water.png', texture => {
-      globeMaterial.specularMap = texture;
-      globeMaterial.specular = new THREE.Color('white');
-      
-    });
+const globeMaterial = globe.globeMaterial()
+globeMaterial.bumpScale = 10
+new THREE.TextureLoader().load('//unpkg.com/three-globe/example/img/earth-water.png', texture => {
+  globeMaterial.specularMap = texture
+  globeMaterial.specular = new THREE.Color('white')
+})
 
 // setTimeout(() => globe.polygonAltitude(() => Math.random()), 4000)
 
@@ -63,7 +62,7 @@ const globe = new ThreeGlobe()
 const scene = new THREE.Scene()
 scene.add(globe)
 scene.add(new THREE.AmbientLight(0xffffff))
-//scene.add(new THREE.DirectionalLight(0xffffff, 0.6))
+// scene.add(new THREE.DirectionalLight(0xffffff, 0.6))
 
 // Set up camera controls
 const controls = new TrackballControls(camera, renderer.domElement)
