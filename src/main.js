@@ -30,6 +30,10 @@ const globe = new ThreeGlobe()
         let intensity = covid[i].intensity;
         if (intensity < 0.25) {
           return 'rgba(0, 255, 0, 1)';
+        } else if (intensity < 0.75) {
+          return 'rgba(255, 255, 0, 1)';
+        } else {
+          return 'rgba(255, 0, 0, 1)';
         }
       }
     }
