@@ -71,5 +71,5 @@ requestAnimationFrame(function animate () {
 })
 
 fetch('http://localhost:3001/?q=foobar')
-// .then(res => res.json())
+.then(res => res.json())
 .then(res => console.log(res))
