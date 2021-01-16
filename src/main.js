@@ -5,6 +5,7 @@ import data from './data/countries.json'
 import covid from './data/covid.json'
 const renderer = new THREE.WebGLRenderer({
   alpha: true,
+  // TO CHANGE
   antialias: false
 })
 renderer.setSize(window.innerWidth, window.innerHeight)
@@ -22,17 +23,18 @@ const globe = new ThreeGlobe()
   .globeImageUrl('//unpkg.com/three-globe/example/img/earth-water.png')
   .polygonsData(data.features)
   .polygonCapColor((countries) => {
+    /*
     console.log(countries);
     for (i = 0; i < 255; i++) {
       for (j = 0; j < 255; j++) {
-        if (countries[i].features[i].properties.ISO_A3 == "CAN") {
+        if (countries.features[i].properties.ISO_A3 == "CAN") {
           return 'rgba(0, 255, 0, 1)';
         }
       }
     }
+    */
     return 'rgba(255, 0, 0, 1)';
   })
-  //.polygonCapColor(() => 'rgba(0, 255, 0, 1)')
   .polygonSideColor(() => 'rgba(0, 0, 0, 0)')
   .polygonStrokeColor(() => 'rgba(0, 0, 0, 1)')
   .polygonAltitude(0.01)
