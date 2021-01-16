@@ -1,3 +1,15 @@
+<<<<<<< HEAD
+[{
+    "ISO_A3": "AFG",
+    "intensity": 0.1
+},{
+    "ISO_A3": "CAN",
+    "intensity": 0.5
+},{
+    "ISO_A3": "MEX",
+    "intensity": 1
+}]
+=======
 [
     {
         "ISO_A3": "AFG",
@@ -16,3 +28,4 @@
         "intensity": 1
     }
 ]
+>>>>>>> 2ad45cb68553dcd35704c69c8e4fe5f706f16c57
