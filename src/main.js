@@ -56,8 +56,6 @@ new THREE.TextureLoader().load('//unpkg.com/three-globe/example/img/earth-water.
   globeMaterial.specular = new THREE.Color('white')
 })
 
-// setTimeout(() => globe.polygonAltitude(() => Math.random()), 4000)
-
 // Set up scene
 const scene = new THREE.Scene()
 scene.add(globe)

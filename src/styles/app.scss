@@ -1,5 +1,6 @@
 $red: #CF6766;
 $blue: #2596FF;
+$secondary: #254dff;
 
 body {
   font-family: Inter, '-apple-system', BlinkMacSystemFont, Helvetica, Arial, sans-serif;
@@ -46,6 +47,14 @@ body {
   border-radius: 10%;
 }
 
+.popup * {
+  margin-top: 2vh;
+}
+
+.popup img {
+  width: 20%;
+}
+
 #popupTitle {
   display: flex;
   justify-content: space-between;
@@ -53,4 +62,15 @@ body {
 
 #popupData {
   width: 100%;
+  border-radius: 5%;
+  background-color: $secondary;
+  padding: 2%;
+}
+
+h2 {
+  font-size: 1.25rem;
+}
+
+h3 {
+  text-align: center;
 }
