@@ -2,9 +2,13 @@ import * as THREE from 'three'
 import ThreeGlobe from 'three-globe'
 import TrackballControls from 'three-trackballcontrols'
 import data from './data/countries.json'
-const renderer = new THREE.WebGLRenderer({
-  antialias: false
-})
+import React from 'react'
+import ReactDOM from 'react-dom'
+import App from './comps/App'
+
+ReactDOM.render(<App/>, document.getElementById('root'))
+
+const renderer = new THREE.WebGLRenderer({ antialias: true })
 renderer.setSize(window.innerWidth, window.innerHeight)
 document.body.appendChild(renderer.domElement)
 
