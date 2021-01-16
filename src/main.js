@@ -28,7 +28,7 @@ const globe = new ThreeGlobe()
     for (i = 0; i < covid.length; i++) {
       if (country.properties.ISO_A3 == covid[i].ISO_A3) {
         let intensity = covid[i].intensity;
-        if (intensity) {
+        if (intensity < 0.25) {
           return 'rgba(0, 255, 0, 1)';
         }
       }
