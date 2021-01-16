@@ -1,5 +1,8 @@
 $red: #CF6766;
 $blue: #2596FF;
+$white: #F7FBFC;
+$silver: #E4EDF6;
+$gray: #7CA2C5;
 
 body {
   font-family: Inter, '-apple-system', BlinkMacSystemFont, Helvetica, Arial, sans-serif;
@@ -31,7 +34,7 @@ body {
   background: $blue;
   border-radius: 50%;
   color: white;
-  padding: 8px;
+  padding: 12px;
   position: absolute;
   right: 16px;
   bottom: 16px;
