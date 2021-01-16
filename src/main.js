@@ -19,9 +19,9 @@ const globe = new ThreeGlobe()
   .polygonsData(data.features.filter(d => d.properties.ISO_A2 !== 'AQ'))
   .polygonCapColor(() => 'rgba(200, 0, 0, 0.7)')
   .polygonSideColor(() => 'rgba(0, 200, 0, 0.1)')
-  .polygonStrokeColor(() => '#111');
+  .polygonStrokeColor(() => '#111')
 
-setTimeout(() => Globe.polygonAltitude(() => Math.random()), 4000);
+setTimeout(() => globe.polygonAltitude(() => Math.random()), 4000)
 
 // Set up scene
 const scene = new THREE.Scene()
@@ -35,8 +35,8 @@ controls.minDistance = 101
 controls.rotateSpeed = 4
 controls.zoomSpeed = 0.8
 
-requestAnimationFrame(function animate() {
+requestAnimationFrame(function animate () {
   controls.update()
   renderer.render(scene, camera)
   requestAnimationFrame(animate)
-});
+})
