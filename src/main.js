@@ -15,7 +15,7 @@ const renderer = new THREE.WebGLRenderer({
   antialias: false
 })
 renderer.setSize(window.innerWidth, window.innerHeight)
-renderer.setClearColor(0xffffff, 1)
+renderer.setClearColor(0xf3f3f3, 1)
 document.body.appendChild(renderer.domElement)
 
 // Set up camera
@@ -32,11 +32,11 @@ const globe = new ThreeGlobe()
     if (data) {
       return 'rgba(0, 255, 0, 1)'
     } else {
-      return 'rgba(255, 0, 0, 1)'
+      return 'rgba(240, 240, 240, 1)'
     }
   })
-  .polygonSideColor(() => 'rgba(0, 0, 0, 0)')
-  .polygonStrokeColor(() => 'rgba(0, 0, 0, 1)')
+  .polygonStrokeColor(() => 'rgba(0, 0, 0, 0.25)')
+  .polygonSideColor(() => 'rgba(200, 200, 200, 1)')
   .polygonAltitude(0.01)
   .polygonsTransitionDuration(0)
   .showAtmosphere(false)
@@ -46,7 +46,7 @@ const globeMaterial = globe.globeMaterial()
 globeMaterial.bumpScale = 10
 new THREE.TextureLoader().load('//unpkg.com/three-globe/example/img/earth-water.png', texture => {
   globeMaterial.specularMap = texture
-  globeMaterial.specular = new THREE.Color('grey')
+  globeMaterial.specular = new THREE.Color('gray')
   globeMaterial.shininess = 25
 })
 
@@ -55,8 +55,7 @@ new THREE.TextureLoader().load('//unpkg.com/three-globe/example/img/earth-water.
 // Set up scene
 const scene = new THREE.Scene()
 scene.add(globe)
-scene.add(new THREE.AmbientLight(0xdddddd))
-// scene.add(new THREE.DirectionalLight(0xffffff, 0.6))
+scene.add(new THREE.AmbientLight(0xffffff))
 
 // Set up camera controls
 const controls = new TrackballControls(camera, renderer.domElement)
@@ -65,6 +64,7 @@ controls.rotateSpeed = 4
 controls.zoomSpeed = 0.8
 
 requestAnimationFrame(function animate () {
+  globe.rotation.y -= 0.001
   controls.update()
   renderer.render(scene, camera)
   requestAnimationFrame(animate)
