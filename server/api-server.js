@@ -52,14 +52,15 @@ async function get (url) {
 
   if (parsed.month) {
     const month = parsed.month
-    const data = await db.getDb().collection('global').find({ date: { $regex: month } },
-      { iso_code: 1, total_cases: 1 }).toArray()
-    console.log(JSON.stringify(data))
+    const data = await db.getDb().collection('global').find({ date: { $regex: month } })
+      .project({ iso_code: 1, total_cases: 1 })
+      .toArray()
+    // console.log(JSON.stringify(data))
     return data
   } else if (parsed.country) {
     const country = parsed.country
     const data = await db.getDb().collection('global').find({ iso_code: country }).toArray()
-    console.log(JSON.stringify(data))
+    // console.log(JSON.stringify(data))
     return data
   }
 }
