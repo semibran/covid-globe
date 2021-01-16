@@ -2,6 +2,7 @@
 
 const http = require('http')
 const db = require('./db')
+const queryString = require('query-string')
 
 module.exports = { listen, handler }
 
@@ -31,7 +32,7 @@ async function handler (req, res) {
 
   // resolve request
   const data = await get(req.url)
-  console.log(data)
+  // console.log(data)
   if (data === undefined) {
     // undefined means data not found, so write 404
     res.writeHead(404)
@@ -45,6 +46,6 @@ async function handler (req, res) {
 
 async function get (url) {
   const data = await db.getDb().collection('global').find({ date: '2020-03-24' }).toArray()
-  console.log(JSON.stringify(data))
+  // console.log(JSON.stringify(data))
   return data
 }
