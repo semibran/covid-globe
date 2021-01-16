@@ -22,7 +22,7 @@ document.body.appendChild(renderer.domElement)
 const camera = new THREE.PerspectiveCamera()
 camera.aspect = window.outerWidth / window.innerHeight
 camera.updateProjectionMatrix()
-camera.position.z = 500
+camera.position.z = 400
 
 const globe = new ThreeGlobe()
   .globeImageUrl('//unpkg.com/three-globe/example/img/earth-water.png')
@@ -32,11 +32,11 @@ const globe = new ThreeGlobe()
     if (data) {
       return 'rgba(0, 255, 0, 1)'
     } else {
-      return 'rgba(240, 240, 240, 1)'
+      return '#386781'
     }
   })
-  .polygonStrokeColor(() => 'rgba(0, 0, 0, 0.25)')
-  .polygonSideColor(() => 'rgba(200, 200, 200, 1)')
+  .polygonStrokeColor(() => '#386781')
+  .polygonSideColor(() => '#ace4f9')
   .polygonAltitude(0.01)
   .polygonsTransitionDuration(0)
   .showAtmosphere(false)
@@ -55,7 +55,7 @@ new THREE.TextureLoader().load('//unpkg.com/three-globe/example/img/earth-water.
 // Set up scene
 const scene = new THREE.Scene()
 scene.add(globe)
-scene.add(new THREE.AmbientLight(0xffffff))
+scene.add(new THREE.AmbientLight(0xace4f9))
 
 // Set up camera controls
 const controls = new TrackballControls(camera, renderer.domElement)
