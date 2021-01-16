@@ -30,11 +30,12 @@ async function handler (req, res) {
   res.setHeader('access-control-allow-origin', '*')
 
   // resolve request
-  const data = get(req.url)
+  const data = await get(req.url)
   console.log(data)
   if (data === undefined) {
     // undefined means data not found, so write 404
     res.writeHead(404)
+    console.log('wrong!')
     res.end()
   } else {
     // otherwise, write response
@@ -43,12 +44,7 @@ async function handler (req, res) {
 }
 
 async function get (url) {
-  await db.getDb().collection('test').find().toArray()
-    .then(result => {
-      console.log(JSON.stringify(result))
-      return result
-    })
-    .catch(err => {
-      console.log(err)
-    })
+  const data = await db.getDb().collection('global').find({ date: '2020-03-24' }).toArray()
+  console.log(JSON.stringify(data))
+  return data
 }
