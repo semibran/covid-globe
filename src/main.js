@@ -40,3 +40,7 @@ requestAnimationFrame(function animate () {
   renderer.render(scene, camera)
   requestAnimationFrame(animate)
 })
+
+fetch('http://localhost:3001/?q=foobar')
+.then(res => res.json())
+.then(res => console.log(res))

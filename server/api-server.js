@@ -1,6 +1,7 @@
 // api-server.js
 
 const http = require('http')
+const { callbackify } = require('util')
 const db = require('./db')
 
 module.exports = { listen, handler }
@@ -8,12 +9,12 @@ module.exports = { listen, handler }
 // listen(port: int)
 // create server and listen on port
 async function listen (port) {
-  db.initDb((err, db) => {
+  await db.initDb((err, db) => {
     if (err) {
       console.log(err) }
   })
 
-  await new Promise(resolve => http.createServer((req, res) => {
+  await new Promise(resolve => http.createServer(async (req, res) => {
     try {
       handler(req, res)
     } catch (err) {
@@ -24,7 +25,7 @@ async function listen (port) {
 
 // handler(req: http.ClientRequest, res: http.ServerResponse)
 // handles a client request
-function handler (req, res) {
+async function handler (req, res) {
   // prevent cors errors (insecure, but ok for small projects)
   res.setHeader('access-control-allow-origin', '*')
 
@@ -40,9 +41,17 @@ function handler (req, res) {
     res.end(JSON.stringify(data))
   }
 
-  console.log('test')
+  console.log(data)
 }
 
-function get (url) {
-  return db.getDb().collection('global').find({ _id:'60026130c62825041a9ae851' })
+async function get (url) {
+  db.getDb().collection('test').find().toArray()
+  .then(result => {
+    console.log(result)
+    return result
+  })
+  //  db.getDb().collection('global').find({ date: '2020-02-24' }).toArray()
+  // .then(result => {
+  //   console.log(result)
+  // })
 }
