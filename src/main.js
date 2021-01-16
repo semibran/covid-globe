@@ -3,7 +3,7 @@ import ThreeGlobe from 'three-globe'
 import TrackballControls from 'three-trackballcontrols'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import App from './comps/App'
+import App, { updateApp } from './comps/App'
 import data from './data/countries.json'
 import covid from './data/covid.json'
 
@@ -72,6 +72,7 @@ controls.zoomSpeed = 0.8
 
 requestAnimationFrame(function animate () {
   globe.rotation.y -= 0.001
+  updateApp()
   controls.update()
   renderer.render(scene, camera)
   requestAnimationFrame(animate)
