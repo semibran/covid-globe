@@ -2,11 +2,14 @@
 
 MAKEFLAGS += --no-print-directory
 
-
 .EXPORT_ALL_VARIABLES:
+.PHONY: all start clean html css js assets
 
 PATH := $(PWD)/node_modules/.bin:$(PATH)
 SHELL := /bin/bash
+
+test:
+	echo $(PATH)
 
 all: clean assets
 	esbuild src/main.js --bundle --minify \
@@ -45,6 +48,3 @@ js:
 assets:
 	rm -rf public/assets
 	cp -R src/assets public/assets
-
-test:
-	echo $(PATH)

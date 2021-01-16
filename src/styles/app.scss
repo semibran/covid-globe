@@ -3,3 +3,18 @@ $red: #CF6766;
 body {
   font-family: Inter, '-apple-system', BlinkMacSystemFont, Helvetica, Arial, sans-serif;
 }
+
+.app {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  color: white;
+  pointer-events: none;
+}
+
+.app h1 {
+  font-weight: bold;
+  bottom: 0;
+  left: 0;
+  position: absolute;
+}

@@ -1,5 +1,7 @@
 import React from 'react'
 
 export default function App () {
-  return <h1>Hello world!</h1>
+  return <main className='app'>
+    <h1>COVID-19 Worldwide</h1>
+  </main>
 }

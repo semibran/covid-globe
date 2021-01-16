@@ -12,24 +12,24 @@ const initDb = callback => {
     return callback(null, _db)
   }
   MongoClient.connect(mongoDbUrl)
-  .then(client => {
+    .then(client => {
       console.log('Database initialized!')
       _db = client.db()
       callback(null, _db)
-  })
-  .catch(err => {
+    })
+    .catch(err => {
       callback(err)
-  })
+    })
 }
 
 const getDb = () => {
-    if(!_db) {
-        throw Error('Database not initialzed')
-    }
-    return _db
+  if (!_db) {
+    throw Error('Database not initialzed')
+  }
+  return _db
 }
 
 module.exports = {
-    initDb,
-    getDb
+  initDb,
+  getDb
 }
