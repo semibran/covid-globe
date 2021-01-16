@@ -56,8 +56,6 @@ new THREE.TextureLoader().load('//unpkg.com/three-globe/example/img/earth-water.
   globeMaterial.specular = new THREE.Color('white')
 })
 
-// setTimeout(() => globe.polygonAltitude(() => Math.random()), 4000)
-
 // Set up scene
 const scene = new THREE.Scene()
 scene.add(globe)
@@ -77,6 +75,10 @@ requestAnimationFrame(function animate () {
   requestAnimationFrame(animate)
 })
 
-// fetch('http://localhost:3001/?q=foobar')
+fetch('http://localhost:3001/?month=2020-03')
+  .then(res => res.json())
+  .then(res => console.log(res))
+
+// fetch('http://localhost:3001/?country=CAN')
 //   .then(res => res.json())
 //   .then(res => console.log(res))
