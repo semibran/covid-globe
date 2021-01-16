@@ -1,0 +1,26 @@
+// * prevents scaling on mobile devices
+
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: 0;
+  box-sizing: border-box;
+  font: inherit;
+  color: inherit;
+}
+
+*, *::after, *::before {
+  box-sizing: inherit;
+}
+
+html {
+  -webkit-text-size-adjust: none; // *
+}
+
+body {
+  width: 100%;
+  min-height: 100vh;
+  -webkit-font-smoothing: subpixel-antialiased;
+  text-rendering: optimizeLegibility;
+}

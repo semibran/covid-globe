@@ -1,0 +1,31 @@
+{
+  "name": "{{project.name}}",
+  "version": "0.0.0",
+  "description": "{{project.description}}",
+  "repository": "{{author.username}}/{{project.name}}",
+  "author": "{{author.username}} ({{author.name}})",
+  "license": "MIT",
+  "dependencies": {
+    "prop-types": "*",
+    "react": "*",
+    "react-dom": "*",
+    "react-router-dom": "^*",
+    "sass": "*"
+  },
+  "devDependencies": {
+    "chokidar-cli": "*",
+    "clean-css-cli": "*",
+    "esbuild": "*",
+    "eslint": "*",
+    "eslint-config-standard": "*",
+    "eslint-plugin-import": "*",
+    "eslint-plugin-node": "*",
+    "eslint-plugin-promise": "*",
+    "eslint-plugin-react": "*",
+    "html-minifier": "*",
+    "postcss": "*",
+    "postcss-cli": "*",
+    "typescript": "*",
+    "uglify-js": "*"
+  }
+}
