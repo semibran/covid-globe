@@ -39,5 +39,4 @@ export default function Popup (props) {
       </div>
     </section>
   </div>
-  );
 }
