@@ -53,7 +53,7 @@ async function get (url) {
   if (parsed.month) {
     const month = parsed.month
     const data = await db.getDb().collection('global').find({ date: { $regex: month } })
-      .project({ iso_code: 1, total_cases: 1 })
+      .project({ iso_code: 1, date: 1, total_cases: 1, total_cases_per_million: 1 })
       .toArray()
     // console.log(JSON.stringify(data))
     return data
