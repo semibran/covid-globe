@@ -24,22 +24,16 @@ camera.aspect = window.outerWidth / window.innerHeight
 camera.updateProjectionMatrix()
 camera.position.z = 500
 
-const x = Math.floor(Math.random() * 255)
 const globe = new ThreeGlobe()
   .globeImageUrl('//unpkg.com/three-globe/example/img/earth-water.png')
   .polygonsData(data.features)
-  .polygonCapColor((countries) => {
-    /*
-    console.log(countries)
-    for (i = 0; i < 255; i++) {
-      for (j = 0; j < 255; j++) {
-        if (countries.features[i].properties.ISO_A3 == "CAN") {
-          return 'rgba(0, 255, 0, 1)';
-        }
-      }
+  .polygonCapColor(country => {
+    const data = covid.find(otherCountry => otherCountry.ISO_A3 === country.properties.ISO_A3)
+    if (data) {
+      return 'rgba(0, 255, 0, 1)'
+    } else {
+      return 'rgba(255, 0, 0, 1)'
     }
-    */
-    return 'rgba(255, 0, 0, 1)'
   })
   .polygonSideColor(() => 'rgba(0, 0, 0, 0)')
   .polygonStrokeColor(() => 'rgba(0, 0, 0, 1)')
@@ -76,6 +70,6 @@ requestAnimationFrame(function animate () {
   requestAnimationFrame(animate)
 })
 
-fetch('http://localhost:3001/?q=foobar')
-  .then(res => res.json())
-  .then(res => console.log(res))
+// fetch('http://localhost:3001/?q=foobar')
+//   .then(res => res.json())
+//   .then(res => console.log(res))

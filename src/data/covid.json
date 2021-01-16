@@ -1,10 +1,18 @@
-[{
-    "ISO_A3": "AFG",
-    "intensity": 0.1
-},{
-    "ISO_A3": "MRA",
-    "intensity": 0.5
-},{
-    "ISO_A3": "FEX",
-    "intensity": 1
-}]
+[
+    {
+        "ISO_A3": "AFG",
+        "intensity": 0.1
+    },
+    {
+        "ISO_A3": "MRA",
+        "intensity": 0.5
+    },
+    {
+        "ISO_A3": "FEX",
+        "intensity": 1
+    },
+    {
+        "ISO_A3": "CAN",
+        "intensity": 1
+    }
+]

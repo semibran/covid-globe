@@ -9,6 +9,7 @@ body {
   height: 100vh;
   position: fixed;
   color: white;
+  pointer-events: none;
 }
 
 .app h1 {
