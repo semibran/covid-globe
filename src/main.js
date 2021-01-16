@@ -27,13 +27,20 @@ camera.position.z = 400
 const globe = new ThreeGlobe()
   .globeImageUrl('//unpkg.com/three-globe/example/img/earth-water.png')
   .polygonsData(data.features)
-  .polygonCapColor(country => {
-    const data = covid.find(otherCountry => otherCountry.ISO_A3 === country.properties.ISO_A3)
-    if (data) {
-      return 'rgba(0, 255, 0, 1)'
-    } else {
-      return '#386781'
+  .polygonCapColor((country) => {
+    for (let i = 0; i < covid.length; i++) {
+      if (country.properties.ISO_A3 === covid[i].ISO_A3) {
+        const intensity = covid[i].intensity
+        if (intensity < 0.25) {
+          return 'rgba(0, 255, 0, 1)'
+        } else if (intensity < 0.75) {
+          return 'rgba(255, 255, 0, 1)'
+        } else {
+          return 'rgba(255, 0, 0, 1)'
+        }
+      }
     }
+    return 'rgba(255, 0, 0, 1)'
   })
   .polygonStrokeColor(() => '#386781')
   .polygonSideColor(() => '#ace4f9')
@@ -46,8 +53,7 @@ const globeMaterial = globe.globeMaterial()
 globeMaterial.bumpScale = 10
 new THREE.TextureLoader().load('//unpkg.com/three-globe/example/img/earth-water.png', texture => {
   globeMaterial.specularMap = texture
-  globeMaterial.specular = new THREE.Color('gray')
-  globeMaterial.shininess = 25
+  globeMaterial.specular = new THREE.Color('white')
 })
 
 // setTimeout(() => globe.polygonAltitude(() => Math.random()), 4000)
@@ -55,7 +61,8 @@ new THREE.TextureLoader().load('//unpkg.com/three-globe/example/img/earth-water.
 // Set up scene
 const scene = new THREE.Scene()
 scene.add(globe)
-scene.add(new THREE.AmbientLight(0xace4f9))
+scene.add(new THREE.AmbientLight(0xffffff))
+// scene.add(new THREE.DirectionalLight(0xffffff, 0.6))
 
 // Set up camera controls
 const controls = new TrackballControls(camera, renderer.domElement)
