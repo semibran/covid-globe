@@ -13,6 +13,7 @@ const initDb = callback => {
   }
   MongoClient.connect(mongoDbUrl)
   .then(client => {
+      console.log('Database initialized!')
       _db = client.db()
       callback(null, _db)
   })

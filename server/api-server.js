@@ -39,9 +39,10 @@ function handler (req, res) {
     // otherwise, write response
     res.end(JSON.stringify(data))
   }
+
+  console.log('test')
 }
 
 function get (url) {
-  // resolve url request
-
+  return db.getDb().collection('global').find({ _id:'60026130c62825041a9ae851' })
 }
