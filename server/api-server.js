@@ -1,6 +1,7 @@
 // api-server.js
 
 const http = require('http')
+const mongodb = require('mongodb').MongoClient
 
 module.exports = { listen, handler }
 
@@ -38,3 +39,11 @@ function handler (req, res) {
 function get (url) {
   // resolve url request
 }
+
+mongodb.connect('mongodb+srv://ning:hackcovid@htn.uttoz.mongodb.net/covid?retryWrites=true&w=majority')
+  .then(client => {
+    console.log('Connected!')
+  })
+  .catch(err => {
+    console.log(err)
+  })
