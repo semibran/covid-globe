@@ -40,7 +40,7 @@ function get (url) {
   // resolve url request
 }
 
-mongodb.connect('mongodb+srv://ning:hackcovid@htn.uttoz.mongodb.net/covid?retryWrites=true&w=majority')
+mongodb.connect('mongodb+srv://ning:vDeS2UfYFwymOuVa@htn.uttoz.mongodb.net/covid?retryWrites=true&w=majority')
   .then(client => {
     console.log('Connected!')
   })
