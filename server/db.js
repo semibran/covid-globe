@@ -14,6 +14,7 @@ const initDb = callback => {
   MongoClient.connect(mongoDbUrl)
   .then(client => {
       _db = client.db()
+      callback(null, _db)
   })
   .catch(err => {
       callback(err)
@@ -25,4 +26,9 @@ const getDb = () => {
         throw Error('Database not initialzed')
     }
     return _db
+}
+
+module.exports = {
+    initDb,
+    getDb
 }

@@ -1,18 +1,18 @@
 // api-server.js
 
 const http = require('http')
-const mongodb = require('mongodb').MongoClient
+const db = require('./db')
 
 module.exports = { listen, handler }
 
 // listen(port: int)
 // create server and listen on port
 async function listen (port) {
-  try {
-    await mongodb.connect('mongodb+srv://ning:vDeS2UfYFwymOuVa@htn.uttoz.mongodb.net/covid?retryWrites=true&w=majority')
-  } catch (err) {
-    console.log(err)
-  }
+  db.initDb((err, db) => {
+    if (err) {
+      console.log(err) }
+  })
+
   await new Promise(resolve => http.createServer((req, res) => {
     try {
       handler(req, res)
@@ -45,5 +45,3 @@ function get (url) {
   // resolve url request
 
 }
-
-
