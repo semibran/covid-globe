@@ -28,10 +28,10 @@ async function listen (port) {
 async function handler (req, res) {
   // prevent cors errors (insecure, but ok for small projects)
   res.setHeader('access-control-allow-origin', '*')
-
+  
   // resolve request
   const data = get(req.url)
-
+  console.log(123)
   if (data === undefined) {
     // undefined means data not found, so write 404
     res.writeHead(404)
@@ -40,16 +40,16 @@ async function handler (req, res) {
     // otherwise, write response
     res.end(JSON.stringify(data))
   }
-
-  console.log(data)
 }
 
 async function get (url) {
   db.getDb().collection('test').find().toArray()
   .then(result => {
-    console.log(result)
+    console.log(JSON.stringify(result))
     return result
   })
+
+
   //  db.getDb().collection('global').find({ date: '2020-02-24' }).toArray()
   // .then(result => {
   //   console.log(result)
