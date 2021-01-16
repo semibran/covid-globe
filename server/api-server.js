@@ -45,7 +45,22 @@ async function handler (req, res) {
 }
 
 async function get (url) {
-  const data = await db.getDb().collection('global').find({ date: '2020-03-24' }).toArray()
-  // console.log(JSON.stringify(data))
-  return data
+  const location = url.slice(1)
+  console.log(location)
+  const parsed = queryString.parse(location)
+  console.log(parsed)
+
+  if (parsed.month) {
+    const month = parsed.month
+    const data = await db.getDb().collection('global').find({ date: { $regex: month } })
+      .project({ iso_code: 1, date: 1, total_cases: 1, total_cases_per_million: 1 })
+      .toArray()
+    // console.log(JSON.stringify(data))
+    return data
+  } else if (parsed.country) {
+    const country = parsed.country
+    const data = await db.getDb().collection('global').find({ iso_code: country }).toArray()
+    // console.log(JSON.stringify(data))
+    return data
+  }
 }
