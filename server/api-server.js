@@ -31,7 +31,7 @@ async function handler (req, res) {
   
   // resolve request
   const data = get(req.url)
-  console.log(123)
+  console.log(data)
   if (data === undefined) {
     // undefined means data not found, so write 404
     res.writeHead(404)
@@ -43,10 +43,13 @@ async function handler (req, res) {
 }
 
 async function get (url) {
-  db.getDb().collection('test').find().toArray()
+  await db.getDb().collection('test').find().toArray()
   .then(result => {
     console.log(JSON.stringify(result))
     return result
+  })
+  .catch(err => {
+    console.log(err)
   })
 
 
