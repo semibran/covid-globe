@@ -1,14 +1,20 @@
 // api-server.js
 
 const http = require('http')
-const mongodb = require('mongodb').MongoClient
+const db = require('./db')
 
 module.exports = { listen, handler }
 
 // listen(port: int)
 // create server and listen on port
-function listen (port) {
-  return new Promise(resolve => http.createServer((req, res) => {
+async function listen (port) {
+  await db.initDb((err, db) => {
+    if (err) {
+      console.log(err)
+    }
+  })
+
+  await new Promise(resolve => http.createServer(async (req, res) => {
     try {
       handler(req, res)
     } catch (err) {
@@ -19,13 +25,13 @@ function listen (port) {
 
 // handler(req: http.ClientRequest, res: http.ServerResponse)
 // handles a client request
-function handler (req, res) {
+async function handler (req, res) {
   // prevent cors errors (insecure, but ok for small projects)
   res.setHeader('access-control-allow-origin', '*')
 
   // resolve request
   const data = get(req.url)
-
+  console.log(data)
   if (data === undefined) {
     // undefined means data not found, so write 404
     res.writeHead(404)
@@ -36,14 +42,13 @@ function handler (req, res) {
   }
 }
 
-function get (url) {
-  // resolve url request
+async function get (url) {
+  await db.getDb().collection('test').find().toArray()
+    .then(result => {
+      console.log(JSON.stringify(result))
+      return result
+    })
+    .catch(err => {
+      console.log(err)
+    })
 }
-
-mongodb.connect('mongodb+srv://ning:hackcovid@htn.uttoz.mongodb.net/covid?retryWrites=true&w=majority')
-  .then(client => {
-    console.log('Connected!')
-  })
-  .catch(err => {
-    console.log(err)
-  })
