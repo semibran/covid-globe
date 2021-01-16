@@ -41,11 +41,16 @@ body {
 .popup {
   background: $blue;
   width: 20vw;
-  height: 20vh;
+  height: auto;
   padding: 2%;
   border-radius: 10%;
 }
 
-.popup div {
+#popupTitle {
   display: flex;
+  justify-content: space-between;
+}
+
+#popupData {
+  width: 100%;
 }
