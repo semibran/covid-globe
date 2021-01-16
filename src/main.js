@@ -77,6 +77,10 @@ requestAnimationFrame(function animate () {
   requestAnimationFrame(animate)
 })
 
-fetch('http://localhost:3001/?q=foobar')
+// fetch('http://localhost:3001/?month=2020-03')
+//   .then(res => res.json())
+//   .then(res => console.log(res))
+
+fetch('http://localhost:3001/?country=CAN')
   .then(res => res.json())
   .then(res => console.log(res))
