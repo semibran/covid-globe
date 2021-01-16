@@ -14,34 +14,34 @@ all: clean assets
 	--loader:.js=jsx \
 	--outfile=tmp/main.bundle.js
 	tsc tmp/main.bundle.js --allowJs --lib DOM,ES2015 --target ES5 --outFile tmp/main.bundle.es5.js
-	uglifyjs tmp/main.bundle.es5.js --toplevel -m -c drop_console=true,passes=3 > dist/main.js
-	sass src/style.scss dist/style.css
-	cleancss dist/style.css -o dist/style.css
-	html-minifier --collapse-whitespace src/index.html -o dist/index.html
-	rm dist/*.map
+	uglifyjs tmp/main.bundle.es5.js --toplevel -m -c drop_console=true,passes=3 > public/main.js
+	sass src/style.scss public/style.css
+	cleancss public/style.css -o public/style.css
+	html-minifier --collapse-whitespace src/index.html -o public/index.html
+	rm public/*.map
 
 start: clean js css html assets
-	chokidar "src/**/*.js" -c "make js" \
-	& chokidar "src/**/*.scss" -c "make css" \
-	& chokidar "src/*.html" -c "make html" \
-	& chokidar "src/assets/*" -c "make assets" \
+	node server --watch src,shared \
+	--js "$(MAKE) js" \
+	--scss "$(MAKE) css" \
+	--html "$(MAKE) html"
 
 clean:
-	rm -rf dist
-	mkdir -p {tmp,src/assets,dist/assets}
+	rm -rf public
+	mkdir -p {tmp,src/assets,public/assets}
 
 html:
-	cp src/index.html dist/index.html
+	cp src/index.html public/index.html
 
 css:
-	sass src/style.scss dist/style.css
+	sass src/style.scss public/style.css
 
 js:
 	esbuild src/main.js --bundle --sourcemap \
 	--define:process.env.NODE_ENV=\"dev\" \
 	--loader:.js=jsx \
-	--outfile=dist/main.js
+	--outfile=public/main.js
 
 assets:
-	rm -rf dist/assets
-	cp -R src/assets dist/assets
+	rm -rf public/assets
+	cp -R src/assets public/assets
