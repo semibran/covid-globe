@@ -37,3 +37,15 @@ body {
   bottom: 16px;
   box-shadow: 0 2px 4px rgba($blue, 0.5);
 }
+
+.popup {
+  background: $blue;
+  width: 20vw;
+  height: 20vh;
+  padding: 2%;
+  border-radius: 10%;
+}
+
+.popup div {
+  display: flex;
+}
