@@ -16,7 +16,7 @@ camera.position.z = 500
 
 const globe = new ThreeGlobe()
   .globeImageUrl('//unpkg.com/three-globe/example/img/earth-dark.jpg')
-  .polygonsData(data.features.filter(d => d.properties.ISO_A2 !== 'AQ'))
+  .polygonData(data.features.filter(d => d.properties.ISO_A2 !== 'AQ'))
   .polygonCapColor(() => 'rgba(200, 0, 0, 0.7)')
   .polygonSideColor(() => 'rgba(0, 200, 0, 0.1)')
   .polygonStrokeColor(() => '#111');
