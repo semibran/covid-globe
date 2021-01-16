@@ -43,4 +43,5 @@ js:
 	--outfile=dist/main.js
 
 assets:
+	rm -rf dist/assets
 	cp -R src/assets dist/assets
