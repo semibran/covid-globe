@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react'
 import * as THREE from 'three'
 import ThreeGlobe from 'three-globe'
 import TrackballControls from 'three-trackballcontrols'
+import lerp from 'lerp'
+import Anim from '../lib/anim'
+import { easeInOut } from '../lib/ease-expo'
 import Popup from './Popup'
 import config from '../config'
 import data from '../data/countries.json'
@@ -72,9 +75,10 @@ new THREE.TextureLoader().load('//unpkg.com/three-globe/example/img/earth-water.
 })
 
 export default function App () {
-  let [select, setSelect] = useState(null)
   const [popup, setPopup] = useState(false)
   const [time, setTime] = useState(start)
+  let [select, setSelect] = useState(null)
+  let flight = null
   let ms = start
 
   function openPopup () {
@@ -97,12 +101,27 @@ export default function App () {
           (p1[1] + p2[1]) / 2
         ]
         const coords = globe.getCoords(...center)
+
         const point = new THREE.Vector3(coords.x, coords.y, coords.z)
         const camdist = camera.position.length()
+
+        const { x: startX, y: startY, z: startZ } = camera.position
+        const start = new THREE.Vector3(startX, startY, startZ)
+
         camera.position
           .copy(point)
           .normalize()
           .multiplyScalar(camdist)
+
+        const { x: goalX, y: goalY, z: goalZ } = camera.position
+        const goal = new THREE.Vector3(goalX, goalY, goalZ)
+
+        camera.position
+          .copy(start)
+          .normalize()
+          .multiplyScalar(camdist)
+
+        flight = { start, goal, anim: Anim(30) }
         return 0.1
       } else {
         return 0.01
@@ -148,6 +167,18 @@ export default function App () {
 
     requestAnimationFrame(function animate () {
       // if (!select) globe.rotation.y -= 0.005
+      if (flight) {
+        const t = flight.anim.update()
+        console.log(t)
+        if (t === -1) {
+          flight = null
+        } else {
+          const x = easeInOut(t)
+          camera.position.x = lerp(flight.start.x, flight.goal.x, x)
+          camera.position.y = lerp(flight.start.y, flight.goal.y, x)
+          camera.position.z = lerp(flight.start.z, flight.goal.z, x)
+        }
+      }
       controls.update()
       renderer.render(scene, camera)
       requestAnimationFrame(animate)

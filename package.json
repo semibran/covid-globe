@@ -6,6 +6,7 @@
   "author": "semibran (Brandon Semilla)",
   "license": "MIT",
   "dependencies": {
+    "lerp": "^1.0.3",
     "mongodb": "^3.6.3",
     "prop-types": "^15.7.2",
     "query-string": "^6.13.8",
