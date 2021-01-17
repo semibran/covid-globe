@@ -159,7 +159,7 @@ export default function App () {
         return 0.01
       }
     })
-    fetch(`http://localhost:3001/?country=${id}`)
+    fetch(location.origin.slice(0, -1) + '/?country=' + id)
       .then(res => res.json())
       .then(setCountryData)
     openPopup()
@@ -310,8 +310,7 @@ export default function App () {
 
   // handle month changes (fetch)
   useEffect(_ => {
-    console.log('fetch', month)
-    fetch('http://localhost:3001/?month=' + month)
+    fetch(location.origin.slice(0, -1) + 1 + '/?month=' + month)
       .then(res => res.json())
       .then(setMonthlyData)
   }, [month])
