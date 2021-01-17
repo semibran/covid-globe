@@ -150,8 +150,9 @@ export default function App () {
     })
     fetch(`http://localhost:3001/?country=${id}`)
       .then(res => res.json())
-      .then(res => fetchData = res)
-    console.log(fetchData)
+      .then((res) => { fetchData = res })
+      .then(console.log(fetchData)
+      )
     openPopup()
   }
 
