@@ -40,7 +40,7 @@ const globe = new ThreeGlobe()
   .polygonsData(data.features)
   .polygonCapColor(() => '#cccccc')
   .polygonStrokeColor(() => '#386781')
-  .polygonSideColor(() => '#ace4f9')
+  .polygonSideColor(() => '#386781')
   .polygonAltitude(0.01)
   .polygonsTransitionDuration(500)
   .showAtmosphere(false)
@@ -81,6 +81,7 @@ const countrystate = countries.map(country => ({
   id: country.id,
   color: [204, 204, 204]
 }))
+
 
 export default function App () {
   const appRef = useRef(null)
@@ -335,7 +336,9 @@ export default function App () {
                exit={popupExit}
                onExit={destroyPopup}
                onChange={evt => selectCountry(evt.target.value)}
-               onClose={deselectCountry} />
+               onClose={deselectCountry}
+               data = {fetchData}
+               />
       : null}
     <div className='overlay'>
       <footer className='player'>
