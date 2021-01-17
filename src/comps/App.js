@@ -71,7 +71,6 @@ function resize () {
 }
 
 let flight = null
-let ms = start
 let popupRef = false
 let popupAnim = null
 let offset = 0
@@ -207,7 +206,6 @@ export default function App () {
       }
     }, true)
 
-    setTime(start)
     setPaused(false)
     requestAnimationFrame(setDelta)
   }, [])
@@ -253,7 +251,7 @@ export default function App () {
     const newMonth = new Date(time).toISOString().slice(0, 7)
     if (month !== newMonth) {
       setMonth(newMonth)
-    } else if (stats) {
+    } else if (stats && !flight) {
       let idx = 0
       for (let i = 0; i < stats.length; i++) {
         if (stats[i].date === new Date(time).toISOString().slice(0, 10)) {
@@ -281,11 +279,12 @@ export default function App () {
         }
       })
     }
+    timeout = setTimeout(_ => setTime(time + config.step), config.interval)
   }, [time])
 
   // handle month changes (fetch)
   useEffect(_ => {
-    console.log('fetch for ' + month)
+    console.log('fetch', month)
     fetch('http://localhost:3001/?month=' + month)
       .then(res => res.json())
       .then(setStats)
@@ -301,14 +300,7 @@ export default function App () {
       }
     } else {
       // start timer
-      timeout = setTimeout(function update () {
-        ms += config.step
-        if (ms >= end) {
-          ms = start
-        }
-        setTime(ms)
-        timeout = setTimeout(update, config.interval)
-      }, config.interval)
+      timeout = setTimeout(_ => setTime(time + config.step), config.interval)
     }
   }, [paused])
 
