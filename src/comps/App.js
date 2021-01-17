@@ -127,8 +127,7 @@ export default function App () {
           (p1[0] + p2[0]) / 2,
           (p1[1] + p2[1]) / 2
         ]
-        const coords = globe.getCoords(...center)
-        flyTo(coords)
+        flyTo(...center)
         return 0.1
       } else {
         return 0.01
@@ -137,7 +136,10 @@ export default function App () {
     openPopup()
   }
 
-  function flyTo (coords) {
+  function flyTo (lat, lng) {
+    const offset = globe.rotation.y / Math.PI * 180
+    lng += offset
+    const coords = globe.getCoords(lat, lng)
     const point = new THREE.Vector3(coords.x, coords.y, coords.z)
     const camdist = camera.position.length()
 
@@ -195,7 +197,6 @@ export default function App () {
     }, config.interval)
 
     requestAnimationFrame(function animate () {
-      // if (!select) globe.rotation.y -= 0.005
       if (flight) {
         const t = flight.anim.update()
         if (t === -1) {
@@ -206,6 +207,8 @@ export default function App () {
           camera.position.y = lerp(flight.start.y, flight.goal.y, x)
           camera.position.z = lerp(flight.start.z, flight.goal.z, x)
         }
+      } else if (!select && !flight) {
+        globe.rotation.y -= 0.005
       }
       controls.update()
       renderer.render(scene, camera)
