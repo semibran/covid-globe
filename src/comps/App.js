@@ -72,7 +72,7 @@ new THREE.TextureLoader().load('//unpkg.com/three-globe/example/img/earth-water.
 })
 
 export default function App () {
-  const [select, setSelect] = useState(null)
+  let [select, setSelect] = useState(null)
   const [popup, setPopup] = useState(false)
   const [time, setTime] = useState(start)
   let ms = start
@@ -83,19 +83,39 @@ export default function App () {
 
   function closePopup () {
     setPopup(false)
-    setSelect(null)
   }
 
   function selectCountry (id) {
+    setSelect(id)
+    select = id
     globe.polygonAltitude(country => {
       if (country.properties.ISO_A3 === id) {
+        const p1 = [country.bbox[1], country.bbox[0]]
+        const p2 = [country.bbox[3], country.bbox[2]]
+        const center = [
+          (p1[0] + p2[0]) / 2,
+          (p1[1] + p2[1]) / 2
+        ]
+        const coords = globe.getCoords(...center)
+        const point = new THREE.Vector3(coords.x, coords.y, coords.z)
+        const camdist = camera.position.length()
+        camera.position
+          .copy(point)
+          .normalize()
+          .multiplyScalar(camdist)
         return 0.1
       } else {
         return 0.01
       }
     })
-    setSelect(id)
     openPopup()
+  }
+
+  function deselectCountry () {
+    setSelect(null)
+    select = null
+    globe.polygonAltitude(0.01)
+    closePopup()
   }
 
   function getProgress () {
@@ -114,8 +134,7 @@ export default function App () {
         console.log(feature.properties.NAME)
         selectCountry(feature.properties.ISO_A3)
       } else {
-        globe.polygonAltitude(0.01)
-        closePopup()
+        deselectCountry()
       }
     }, true)
 
@@ -128,7 +147,7 @@ export default function App () {
     }, config.interval)
 
     requestAnimationFrame(function animate () {
-      globe.rotation.y -= 0.005
+      // if (!select) globe.rotation.y -= 0.005
       controls.update()
       renderer.render(scene, camera)
       requestAnimationFrame(animate)
@@ -145,7 +164,7 @@ export default function App () {
     {popup
       ? <Popup select={select}
                onChange={evt => selectCountry(evt.target.value)}
-               onClose={closePopup} />
+               onClose={deselectCountry} />
       : null}
   </main>
 }
