@@ -44,39 +44,6 @@ const globe = new ThreeGlobe()
   .showAtmosphere(false)
   .showGraticules(true)
 
-const date = '2021-01-10'
-
-fetch('http://localhost:3001/?month=2021-01')
-  .then(res => res.json())
-  .then(res => {
-    let dateIndex = 0
-    for (let i = 0; i < res.length; i++) {
-      if (res[i].date === date) {
-        dateIndex = i
-        i = res.length
-      }
-    }
-
-    const highestCaseCountry = Object.keys(res[dateIndex].countries).sort((a, b) =>
-      parseInt(res[dateIndex].countries[b]) - parseInt(res[dateIndex].countries[a]))[0]
-    const highestCases = res[dateIndex].countries[highestCaseCountry]
-
-    const fromColor = [255, 245, 163]
-    const toColor = [193, 44, 89]
-    globe.polygonCapColor(country => {
-      const intensity = res[dateIndex].countries[country.properties.ISO_A3]
-      if (intensity) {
-        const rate = intensity / highestCases
-        const r = lerp(fromColor[0], toColor[0], rate)
-        const g = lerp(fromColor[1], toColor[1], rate)
-        const b = lerp(fromColor[2], toColor[2], rate)
-        return `rgb(${r}, ${g}, ${b})`
-      } else {
-        return '#ccc'
-      }
-    })
-  })
-
 // Set up scene
 const scene = new THREE.Scene()
 scene.add(globe)
@@ -117,6 +84,8 @@ export default function App () {
   const [popup, setPopup] = useState(false)
   const [paused, setPaused] = useState(true)
   const [delta, setDelta] = useState(null)
+  const [stats, setStats] = useState(null)
+  const [month, setMonth] = useState(null)
   let [select, setSelect] = useState(null)
 
   function openPopup () {
@@ -238,6 +207,7 @@ export default function App () {
       }
     }, true)
 
+    setTime(start)
     setPaused(false)
     requestAnimationFrame(setDelta)
   }, [])
@@ -277,6 +247,49 @@ export default function App () {
     renderer.render(scene, camera)
     requestAnimationFrame(setDelta)
   }, [delta])
+
+  // handle timestamp changes
+  useEffect(_ => {
+    const newMonth = new Date(time).toISOString().slice(0, 7)
+    if (month !== newMonth) {
+      setMonth(newMonth)
+    } else if (stats) {
+      let idx = 0
+      for (let i = 0; i < stats.length; i++) {
+        if (stats[i].date === new Date(time).toISOString().slice(0, 10)) {
+          idx = i
+          break
+        }
+      }
+
+      const highestCaseCountry = Object.keys(stats[idx].countries)
+        .sort((a, b) => parseInt(stats[idx].countries[b]) - parseInt(stats[idx].countries[a]))[0]
+      const highestCases = stats[idx].countries[highestCaseCountry]
+
+      const fromColor = [255, 245, 163]
+      const toColor = [193, 44, 89]
+      globe.polygonCapColor(country => {
+        const intensity = stats[idx].countries[country.properties.ISO_A3]
+        if (intensity) {
+          const rate = intensity / highestCases
+          const r = lerp(fromColor[0], toColor[0], rate)
+          const g = lerp(fromColor[1], toColor[1], rate)
+          const b = lerp(fromColor[2], toColor[2], rate)
+          return `rgb(${r}, ${g}, ${b})`
+        } else {
+          return '#ccc'
+        }
+      })
+    }
+  }, [time])
+
+  // handle month changes (fetch)
+  useEffect(_ => {
+    console.log('fetch for ' + month)
+    fetch('http://localhost:3001/?month=' + month)
+      .then(res => res.json())
+      .then(setStats)
+  }, [month])
 
   // handle pause state changes
   useEffect(_ => {
