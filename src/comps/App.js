@@ -88,6 +88,7 @@ export default function App () {
   const [popupExit, setPopupExit] = useState(false)
   const [popup, setPopup] = useState(false)
   const [paused, setPaused] = useState(true)
+  const [rotate, setRotate] = useState(true)
   const [delta, setDelta] = useState(null)
   const [stats, setStats] = useState(null)
   const [month, setMonth] = useState(null)
@@ -125,6 +126,10 @@ export default function App () {
     setPaused(!paused)
   }
 
+  function toggleRotate () {
+    setRotate(!rotate)
+  }
+
   function gotoStart () {
     globe.rotation.y = 0
     setTime(start)
@@ -153,6 +158,9 @@ export default function App () {
         return 0.01
       }
     })
+    // fetch(`http://localhost:3001/?country=${id}`)
+    //   .then(res => res.json())
+    //   .then(res => console.log(res))
     openPopup()
   }
 
@@ -239,12 +247,9 @@ export default function App () {
           }
           globe.polygonCapColor(feature => {
             const country = countrystate.find(country => country.id === feature.properties.ISO_A3)
-            if (country) {
-              return 'rgb(' + country.color.join(',') + ')'
-            } else {
-              console.log('no feature for ', feature.properties.NAME)
-              return 'black'
-            }
+            return country
+              ? 'rgb(' + country.color.join(',') + ')'
+              : 'black'
           })
         }
       }
@@ -260,8 +265,13 @@ export default function App () {
         camera.position.y = lerp(flight.start.y, flight.goal.y, x)
         camera.position.z = lerp(flight.start.z, flight.goal.z, x)
       }
-    } else if (!select && !flight && !paused) {
+    } else if (rotate && !select && !flight && !paused) {
       globe.rotation.y -= 0.005
+      if (globe.rotation.z < 0) {
+        globe.rotation.z += 0.01
+      } else if (globe.rotation.z > 0) {
+        globe.rotation.z -= 0.01
+      }
     }
 
     if (popupAnim) {
@@ -344,6 +354,8 @@ export default function App () {
             <span className='icon material-icons-round' onClick={gotoEnd}>
               skip_next
             </span>
+            <span className={'icon material-icons-round' + (rotate ? ' -select' : '')}
+                  onClick={toggleRotate}>360</span>
           </div>
         </div>
         <div className='bar'>

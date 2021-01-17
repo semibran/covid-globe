@@ -72,6 +72,10 @@ body {
   margin-left: 12px;
 }
 
+.player-controls .icon.-select {
+  color: $blue;
+}
+
 .player-controls .icon:hover {
   cursor: pointer;
 }
