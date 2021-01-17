@@ -83,6 +83,7 @@ export default function App () {
 
   function closePopup () {
     setPopup(false)
+    setSelect(null)
   }
 
   function getProgress () {
@@ -110,7 +111,6 @@ export default function App () {
         openPopup()
       } else {
         globe.polygonAltitude(0.01)
-        setSelect(null)
         closePopup()
       }
     }, true)
@@ -139,7 +139,7 @@ export default function App () {
            style={{ width: getProgress() }}></div>
     </div>
     {popup
-      ? <Popup onClose={closePopup} />
+      ? <Popup select={select} onChange={setSelect} onClose={closePopup} />
       : null}
   </main>
 }

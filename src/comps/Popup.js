@@ -3,6 +3,8 @@ import type from 'prop-types'
 import countries from '../data/countries'
 
 Popup.propTypes = {
+  select: type.string,
+  onChange: type.func,
   onClose: type.func
 }
 
@@ -11,9 +13,9 @@ export default function Popup (props) {
     <span onClick={props.onClose} className='popup-close material-icons-round'>close</span>
     <section className='popup-section -select'>
       <h3 className='popup-heading'>Country Statistics</h3>
-      <select className='popup-select'>
+      <select className='popup-select' value={props.select} onChange={props.onChange}>
         {['Worldwide', ...countries].map((country, i) =>
-          <option key={i} className='popup-option'>{country}</option>
+          <option key={i} value={country.id} className='popup-option'>{country.name}</option>
         )}
       </select>
     </section>
