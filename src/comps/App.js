@@ -42,8 +42,6 @@ const globe = new ThreeGlobe()
   .showAtmosphere(false)
   .showGraticules(true)
 
-const date = '2021-01-10'
-
 // Set up scene
 const scene = new THREE.Scene()
 scene.add(globe)
@@ -191,13 +189,15 @@ export default function App () {
 
   useEffect(_ => {
     // Fetch data from the db
-    const startMonth = new Date(time).toISOString().slice(0, 7)
-    fetch(`http://localhost:3001/?month=${startMonth}`)
-      .then(res => res.json())
-      .then(month => {
-        setMonth(month)
-      })
-  }, [])
+    if (new Date(time).toISOString().slice(7, 10) === '-01') {
+      const startMonth = new Date(time).toISOString().slice(0, 7)
+      fetch(`http://localhost:3001/?month=${startMonth}`)
+        .then(res => res.json())
+        .then(month => {
+          setMonth(month)
+        })
+    }
+  }, [time])
 
   // simulate componentDidMount
   useEffect(_ => {
@@ -283,7 +283,6 @@ export default function App () {
   // When month is updated
   useEffect(() => {
     if (month) {
-      console.log(new Date(time).toISOString().slice(0, 10))
       let dateIndex = 0
       for (let i = 0; i < month.length; i++) {
         if (month[i].date === new Date(time).toISOString().slice(0, 10)) {
@@ -329,7 +328,7 @@ export default function App () {
         return 'rgba(60, 60, 60, 1)'
       })
     }
-  }, [month])
+  }, [time])
 
   return <main className='app' ref={appRef}>
     {popup || popupExit
