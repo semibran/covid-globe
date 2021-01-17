@@ -1,4 +1,5 @@
 dependencies:
+  lerp: 1.0.3
   mongodb: 3.6.3
   prop-types: 15.7.2
   query-string: 6.13.8
@@ -1478,6 +1479,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-Qgzn1p0ywJsXJ3NBjIGst/EGvH2VF+YeVsVfWHZ1ZFX1v7AJfz215OWf3mRFy6NZBbN67yc1qUxAuJU+vuTtAA==
+  /lerp/1.0.3:
+    dev: false
+    resolution:
+      integrity: sha1-oYyJaPkXiW3hXM/MKNVaa3Med24=
   /levn/0.4.1:
     dependencies:
       prelude-ls: 1.2.1
@@ -2747,6 +2752,7 @@ specifiers:
   eslint-plugin-promise: ^4.2.1
   eslint-plugin-react: ^7.22.0
   html-minifier: ^4.0.0
+  lerp: ^1.0.3
   mongodb: ^3.6.3
   postcss: ^8.2.4
   postcss-cli: ^8.3.1

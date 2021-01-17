@@ -2,7 +2,8 @@ const fileserver = require('./file-server')
 const devserver = require('./dev-server')
 const apiserver = require('./api-server')
 const opts = require('./lib/parse-argv')(process.argv)
-const port = (opts.port || 3000)
+// const port = (opts.port || 3000)
+const port = (process.env.PORT || 3000)
 const url = 'http://localhost:' + port
 const prod = process.env.NODE_ENV === 'production'
 
