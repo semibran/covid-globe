@@ -1,5 +1,8 @@
 $red: #CF6766;
 $blue: #2596FF;
+$white: #F7FBFC;
+$silver: #E4EDF6;
+$gray: #7CA2C5;
 $secondary: #254dff;
 
 body {
@@ -32,45 +35,27 @@ body {
   background: $blue;
   border-radius: 50%;
   color: white;
-  padding: 8px;
+  padding: 12px;
   position: absolute;
   right: 16px;
   bottom: 16px;
   box-shadow: 0 2px 4px rgba($blue, 0.5);
 }
 
-.popup {
-  background: $blue;
-  width: 20vw;
-  height: auto;
-  padding: 2%;
-  border-radius: 10%;
-}
-
-.popup * {
-  margin-top: 2vh;
-}
-
-.popup img {
-  width: 20%;
-}
-
-#popupTitle {
-  display: flex;
-  justify-content: space-between;
-}
-
-#popupData {
+.bar {
+  background: silver;
   width: 100%;
-  border-radius: 5%;
-  background-color: $secondary;
-  padding: 2%;
+  height: 4px;
+  border-radius: 2px;
+  position: relative;
 }
 
-h2 {
-  font-size: 1.25rem;
-}
-
-h3 {
-  text-align: center;
+.bar-progress {
+  height: 100%;
+  border-radius: inherit;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: $blue;
+  transition: 0.3s width linear;
 }

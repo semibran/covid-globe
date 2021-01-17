@@ -1,35 +1,42 @@
 import React from 'react'
 import type from 'prop-types'
+import countries from '../data/countries'
 
 Popup.propTypes = {
   onClose: type.func
 }
 
 export default function Popup (props) {
-  return (
-  <div className='popup'>
-    <div id='popupTitle'>
-      <img src='assets/round.png'/>
-      <h2>STATISTICS + CONTROLS</h2>
-      <button onClick={props.onClose} className='material-icons-round'>close</button>
-    </div>
-    <h3>COUNTRY STATISTICS</h3>
-    <div id='dropdown'>
-      <select>
-        <option value='0'>Worldwide</option>
-        <option value='1'>Worldwider</option>
-        <option value='2'>Worldwidest</option>
+  return <div className='popup'>
+    <span onClick={props.onClose} className='popup-close material-icons-round'>close</span>
+    <section className='popup-section -select'>
+      <h3 className='popup-heading'>Country Statistics</h3>
+      <select className='popup-select'>
+        {['Worldwide', ...countries].map((country, i) =>
+          <option key={i} className='popup-option'>{country}</option>
+        )}
       </select>
-    </div>
-    <div id='popupStats'></div>
-    <h3 id='date'></h3>
-    <div id='popupData'>
-      <div id='cases'>Active Cases:</div>
-      <div id='totalCases'>Total Cases to Date:</div>
-      <div id='totalDeaths'>Total Deaths to Date:</div>
-    </div>
-    <h3>Controls</h3>
-    <div id='controls'></div>
+    </section>
+    <section className='popup-section -values'>
+      <h3 className='popup-heading'>July 12-19, 2020</h3>
+      <div className='popup-entries'>
+        <div className='popup-entry -cases'>
+          <span className='popup-prop'>Active cases</span>
+          <span className='popup-value'>10,100</span>
+        </div>
+        <div className='popup-entry -recovers'>
+          <span className='popup-prop'>Recovered</span>
+          <span className='popup-value'>10,100</span>
+        </div>
+        <div className='popup-entry -cases-ytd'>
+          <span className='popup-prop'>Cases to date</span>
+          <span className='popup-value'>10,100</span>
+        </div>
+        <div className='popup-entry -deaths-ytd'>
+          <span className='popup-prop'>Deaths to date</span>
+          <span className='popup-value'>10,100</span>
+        </div>
+      </div>
+    </section>
   </div>
-  );
 }
