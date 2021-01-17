@@ -205,7 +205,8 @@ export default function App () {
 
   function handleBar (evt) {
     const rect = evt.target.getBoundingClientRect()
-    const t = (evt.clientX - rect.left) / rect.width
+    const t = (evt.pageX - rect.left) / rect.width
+    console.log(t)
     if (timeout) {
       clearTimeout(timeout)
       timeout = null

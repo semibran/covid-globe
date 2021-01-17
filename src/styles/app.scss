@@ -128,4 +128,5 @@ body {
   top: 0;
   background: $blue;
   transition: 0.3s width linear;
+  pointer-events: none;
 }
