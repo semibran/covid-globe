@@ -1,24 +1,24 @@
 @keyframes enter {
   from {
     opacity: 0;
-    transform: translateX(4rem);
+    transform: translateX(4rem) translateY(-50%);
   }
 
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateX(0) translateY(-50%);
   }
 }
 
 @keyframes exit {
   from {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateX(0) translateY(-50%);
   }
 
   to {
     opacity: 0;
-    transform: translateX(4rem);
+    transform: translateX(4rem) translateY(-50%);
   }
 }
 
@@ -31,7 +31,10 @@
   padding: 2rem 1rem;
   box-shadow: 0 4px 8px rgba(black, 0.125);
   width: 360px;
-  position: relative;
+  position: absolute;
+  top: 50%;
+  right: 0;
+  margin: 2rem;
   animation: 500ms enter ease-out forwards;
 }
 

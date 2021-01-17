@@ -6,19 +6,13 @@ $gray: #7CA2C5;
 $secondary: #254dff;
 
 body {
+  color: black;
+  background: #f3f3f3;
   font-family: Inter, '-apple-system', BlinkMacSystemFont, Helvetica, Arial, sans-serif;
 }
 
 .app {
-  width: 100vw;
-  height: 100vh;
-  position: fixed;
-  color: black;
-  pointer-events: none;
-
-  & > * {
-    pointer-events: auto;
-  }
+  display: flex;
 }
 
 .app h1 {
@@ -29,6 +23,17 @@ body {
   position: absolute;
   bottom: 0;
   left: 0;
+}
+
+.overlay {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  pointer-events: none;
+
+  & > * {
+    pointer-events: auto;
+  }
 }
 
 .button {
