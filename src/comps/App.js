@@ -38,12 +38,12 @@ controls.noPan = true
 const globe = new ThreeGlobe()
   .globeImageUrl('//i.imgur.com/Uiwi43V.png')
   .polygonsData(data.features)
-  .polygonCapColor(() => '#cccccc')
+  .polygonCapColor(() => '#ececec')
   .polygonStrokeColor(() => '#386781')
   .polygonSideColor(() => '#386781')
   .polygonAltitude(0.01)
   .polygonsTransitionDuration(500)
-  .showAtmosphere(false)
+  .showAtmosphere(true)
   .showGraticules(true)
 
 // Set up scene
@@ -79,7 +79,7 @@ let offset = 0
 let timeout = null
 const countrystate = countries.map(country => ({
   id: country.id,
-  color: [204, 204, 204]
+  color: [236, 236, 236]
 }))
 
 export default function App () {
@@ -132,6 +132,7 @@ export default function App () {
   }
 
   function gotoStart () {
+    countrystate.forEach(country => { country.color = [236, 236, 236] })
     globe.rotation.y = 0
     setTime(start)
     setPaused(true)
@@ -200,6 +201,17 @@ export default function App () {
 
   function getProgress () {
     return (time - start) / (end - start) * 100 + '%'
+  }
+
+  function handleBar (evt) {
+    const rect = evt.target.getBoundingClientRect()
+    const t = (evt.clientX - rect.left) / rect.width
+    if (timeout) {
+      clearTimeout(timeout)
+      timeout = null
+    }
+    countrystate.forEach(country => { country.color = [236, 236, 236] })
+    setTime(lerp(start, end, t))
   }
 
   // simulate componentDidMount
@@ -300,6 +312,7 @@ export default function App () {
     if (time > end) return setTime(start)
     const newMonth = new Date(time).toISOString().slice(0, 7)
     if (month !== newMonth) {
+      console.log(newMonth)
       setMonth(newMonth)
     }
 
@@ -367,7 +380,7 @@ export default function App () {
                   onClick={toggleRotate}>360</span>
           </div>
         </div>
-        <div className='bar'>
+        <div className='bar' onClick={handleBar}>
           <div className='bar-progress' style={{ width: getProgress() }}></div>
         </div>
       </footer>
