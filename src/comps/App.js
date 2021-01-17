@@ -159,7 +159,7 @@ export default function App () {
         return 0.01
       }
     })
-    fetch(location.protocol + '//' + location.hostname + ':3001/?country=' + id)
+    fetch('/?country=' + id)
       .then(res => res.json())
       .then(setCountryData)
     openPopup()
@@ -310,7 +310,7 @@ export default function App () {
 
   // handle month changes (fetch)
   useEffect(_ => {
-    fetch(location.protocol + '//' + location.hostname + ':3001/?month=' + month)
+    fetch('/?month=' + month)
       .then(res => res.json())
       .then(setMonthlyData)
   }, [month])
