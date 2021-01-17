@@ -49,15 +49,33 @@ export default function Popup (props) {
       const y = (1 - parseInt(point.total_cases) / max) * canvas.height
       if (!i) {
         context.moveTo(x, y)
+      } else if (i === props.data.length - 1) {
+        context.lineTo(x, y)
+        context.lineTo(x + 2, y)
       } else {
         context.lineTo(x, y)
       }
     }
+    context.lineTo(canvas.width + 2, canvas.height + 2)
+    context.lineTo(0, canvas.height + 2)
     context.strokeStyle = '#2596FF'
     context.stroke()
+    context.fillStyle = '#2596FF'
+    context.globalAlpha = 0.5
+    context.fill()
+    context.globalAlpha = 1
   }, [props.data])
 
-  return <div className={props.exit ? 'popup -exit' : 'popup'} onAnimationEnd={_ => props.exit && props.onExit()}>
+  function onEnd () {
+    if (props.exit) {
+      const canvas = canvasRef.current
+      const context = canvas.getContext('2d')
+      context.clearRect(0, 0, canvas.width, canvas.height)
+      props.onExit()
+    }
+  }
+
+  return <div className={props.exit ? 'popup -exit' : 'popup'} onAnimationEnd={onEnd}>
     <span onClick={props.onClose} className='popup-close material-icons-round'>close</span>
     <section className='popup-section -select'>
       <h3 className='popup-heading'>Country Statistics</h3>
