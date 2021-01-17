@@ -47,9 +47,7 @@ async function handler (req, res) {
 
 async function get (url) {
   const location = url.slice(1)
-  console.log(location)
   const parsed = queryString.parse(location)
-  console.log(parsed)
 
   if (parsed.month) {
     const dateM = parsed.month
@@ -68,12 +66,10 @@ async function get (url) {
 }
 
 function normalize (data, dateM) {
-  let month = parseInt(dateM.slice(5))
+  const month = parseInt(dateM.slice(5))
   const year = parseInt(dateM.slice(0, 4))
-  console.log(month)
-  console.log(year)
 
-  let dataN = []
+  const dataN = []
   for (let i = 1;
     i <= (month === 2 && year % 4 === 0 ? 29 : months[month - 1]);
     i++) {
@@ -83,7 +79,6 @@ function normalize (data, dateM) {
       dataN.push({ date: dateM + '-' + i, countries: {} })
     }
   }
-  console.log(dataN)
 
   data.forEach(element => {
     const date = element.date
