@@ -37,27 +37,40 @@ controls.zoomSpeed = 0.8
 const globe = new ThreeGlobe()
   .globeImageUrl('//i.imgur.com/Uiwi43V.png')
   .polygonsData(data.features)
-  .polygonCapColor(country => {
-    for (let i = 0; i < covid.length; i++) {
-      if (country.properties.ISO_A3 === covid[i].ISO_A3) {
-        const intensity = covid[i].intensity
-        if (intensity < 0.25) {
-          return 'rgba(0, 255, 0, 1)'
-        } else if (intensity < 0.75) {
-          return 'rgba(255, 255, 0, 1)'
-        } else {
-          return 'rgba(255, 0, 0, 1)'
-        }
-      }
-    }
-    return 'rgba(255, 0, 0, 1)'
-  })
   .polygonStrokeColor(() => '#386781')
   .polygonSideColor(() => '#ace4f9')
   .polygonAltitude(0.01)
   .polygonsTransitionDuration(500)
   .showAtmosphere(false)
   .showGraticules(true)
+
+let date = '2021-01-10'
+
+fetch('http://localhost:3001/?month=2021-01')
+  .then(res => res.json())
+  .then(res => {
+    let dateIndex = 0
+    for (let i = 0; i < res.length; i++) {
+      if (res[i].date === date) {
+        dateIndex = i
+        i = res.length
+      }
+    }
+
+    const highestCaseCountry = Object.keys(res[dateIndex].countries).sort((a, b) =>
+      parseInt(res[dateIndex].countries[b]) - parseInt(res[dateIndex].countries[a]))[0]
+    const highestCases = res[dateIndex].countries[highestCaseCountry]
+
+    globe.polygonCapColor(country => {
+      const intensity = res[dateIndex].countries[country.properties.ISO_A3]
+      if (intensity) {
+        const red = (intensity / highestCases) * 255
+        const green = 255 - red
+        return `rgba(${red}, ${green}, 0, 1)`
+      }
+      return 'rgba(128, 128, 128, 1)'
+    })
+  })
 
 // Set up scene
 const scene = new THREE.Scene()
