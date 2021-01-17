@@ -45,6 +45,7 @@ async function handler (req, res) {
   }
 }
 
+// query mongodb
 async function get (url) {
   const location = url.slice(1)
   const parsed = queryString.parse(location)
@@ -65,6 +66,7 @@ async function get (url) {
   }
 }
 
+// data normalization
 function normalize (data, dateM) {
   const month = parseInt(dateM.slice(5))
   const year = parseInt(dateM.slice(0, 4))
