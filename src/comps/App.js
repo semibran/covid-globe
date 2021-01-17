@@ -39,7 +39,6 @@ const globe = new ThreeGlobe()
   .globeImageUrl('//i.imgur.com/Uiwi43V.png')
   .polygonsData(data.features)
   .polygonStrokeColor(() => '#386781')
-  .polygonSideColor(() => '#ace4f9')
   .polygonAltitude(0.01)
   .polygonsTransitionDuration(500)
   .showAtmosphere(false)
@@ -70,6 +69,16 @@ fetch('http://localhost:3001/?month=2021-01')
         return `rgba(${red}, ${green}, 0, 1)`
       }
       return 'rgba(128, 128, 128, 1)'
+    })
+
+    globe.polygonSideColor(country => {
+      const intensity = res[dateIndex].countries[country.properties.ISO_A3]
+      if (intensity) {
+        const red = (intensity / highestCases) * 128
+        const green = 128 - red
+        return `rgba(${red}, ${green}, 0, 1)`
+      }
+      return 'rgba(60, 60, 60, 1)'
     })
   })
 
