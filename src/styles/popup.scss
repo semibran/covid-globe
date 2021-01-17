@@ -10,6 +10,18 @@
   }
 }
 
+@keyframes exit {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(4rem);
+  }
+}
+
 .popup {
   background: white;
   color: $gray;
@@ -24,7 +36,7 @@
 }
 
 .popup.-exit {
-  animation: 500ms enter ease-in reverse;
+  animation: 250ms exit ease-in;
 }
 
 .popup-close {

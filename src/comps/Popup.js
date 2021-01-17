@@ -7,14 +7,21 @@ const worldwide = {
   name: 'Worldwide'
 }
 
+let select = null
+
 Popup.propTypes = {
   select: type.string,
+  exit: type.bool,
+  onExit: type.func,
   onChange: type.func,
   onClose: type.func
 }
 
 export default function Popup (props) {
   const canvasRef = useRef(null)
+  if (props.select && props.select !== select) {
+    select = props.select
+  }
 
   useEffect(_ => {
     const canvas = canvasRef.current
@@ -24,11 +31,11 @@ export default function Popup (props) {
     canvas.height = rect.height
   }, [])
 
-  return <div className='popup'>
+  return <div className={props.exit ? 'popup -exit' : 'popup'} onAnimationEnd={_ => props.exit && props.onExit()}>
     <span onClick={props.onClose} className='popup-close material-icons-round'>close</span>
     <section className='popup-section -select'>
       <h3 className='popup-heading'>Country Statistics</h3>
-      <select className='popup-select' value={props.select || 'WWW'} onChange={props.onChange}>
+      <select className='popup-select' value={select || 'WWW'} onChange={props.onChange}>
         {[worldwide, ...countries].map((country, i) =>
           <option key={i} value={country.id} className='popup-option'>{country.name}</option>
         )}

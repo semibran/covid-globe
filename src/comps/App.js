@@ -105,15 +105,23 @@ let ms = start
 
 export default function App () {
   const [popup, setPopup] = useState(false)
+  const [popupExit, setPopupExit] = useState(false)
   const [time, setTime] = useState(start)
   let [select, setSelect] = useState(null)
 
   function openPopup () {
     setPopup(true)
+    setPopupExit(false)
   }
 
   function closePopup () {
+    setPopupExit(true)
+    console.log('closing popup')
+  }
+
+  function destroyPopup () {
     setPopup(false)
+    setPopupExit(false)
   }
 
   function selectCountry (id) {
@@ -235,8 +243,10 @@ export default function App () {
         <div className='bar-progress' style={{ width: getProgress() }}></div>
       </div>
     </footer>
-    {popup
+    {popup || popupExit
       ? <Popup select={select}
+               exit={popupExit}
+               onExit={destroyPopup}
                onChange={evt => selectCountry(evt.target.value)}
                onClose={deselectCountry} />
       : null}
