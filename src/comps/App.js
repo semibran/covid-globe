@@ -151,6 +151,16 @@ export default function App () {
     setPaused(!paused)
   }
 
+  function gotoStart () {
+    setTime(start)
+    setPaused(true)
+  }
+
+  function gotoEnd () {
+    setTime(end)
+    setPaused(true)
+  }
+
   function selectCountry (id) {
     setSelect(id)
     select = id
@@ -305,11 +315,15 @@ export default function App () {
             {new Date(time).toGMTString().slice(5, 16)}
           </div>
           <div className='player-controls'>
-            <span className='icon material-icons-round'>skip_previous</span>
+            <span className='icon material-icons-round' onClick={gotoStart}>
+              skip_previous
+            </span>
             <span className='icon material-icons-round' onClick={togglePaused}>
               {paused ? 'play_arrow' : 'pause'}
             </span>
-            <span className='icon material-icons-round'>skip_next</span>
+            <span className='icon material-icons-round' onClick={gotoEnd}>
+              skip_next
+            </span>
           </div>
         </div>
         <div className='bar'>
