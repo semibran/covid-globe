@@ -9,6 +9,7 @@ import covid from './data/covid.json'
 
 ReactDOM.render(<App/>, document.getElementById('root'))
 
+// Set up renderer
 const renderer = new THREE.WebGLRenderer({
   alpha: true,
   // TO CHANGE
@@ -20,12 +21,12 @@ document.body.appendChild(renderer.domElement)
 
 // Set up camera
 const camera = new THREE.PerspectiveCamera()
-camera.aspect = window.outerWidth / window.innerHeight
+camera.aspect = window.innerWidth / window.innerHeight
 camera.updateProjectionMatrix()
 camera.position.z = 400
 
 const globe = new ThreeGlobe()
-  .globeImageUrl('//unpkg.com/three-globe/example/img/earth-water.png')
+  .globeImageUrl('//i.imgur.com/Uiwi43V.png')
   .polygonsData(data.features)
   .polygonCapColor((country) => {
     for (let i = 0; i < covid.length; i++) {
@@ -46,15 +47,8 @@ const globe = new ThreeGlobe()
   .polygonSideColor(() => '#ace4f9')
   .polygonAltitude(0.01)
   .polygonsTransitionDuration(0)
-  .showAtmosphere(false)
-  // .showGraticules(true)
-
-const globeMaterial = globe.globeMaterial()
-globeMaterial.bumpScale = 10
-new THREE.TextureLoader().load('//unpkg.com/three-globe/example/img/earth-water.png', texture => {
-  globeMaterial.specularMap = texture
-  globeMaterial.specular = new THREE.Color('white')
-})
+  .showAtmosphere(true)
+  //.showGraticules(true)
 
 // Set up scene
 const scene = new THREE.Scene()
@@ -64,12 +58,13 @@ scene.add(new THREE.AmbientLight(0xffffff))
 
 // Set up camera controls
 const controls = new TrackballControls(camera, renderer.domElement)
-controls.minDistance = 101
-controls.rotateSpeed = 4
+controls.minDistance = 150
+controls.rotateSpeed = 1.75
 controls.zoomSpeed = 0.8
 
 requestAnimationFrame(function animate () {
-  globe.rotation.y -= 0.001
+  globe.rotation.y += 0.005
+  globe.rotation.x += 0.005
   controls.update()
   renderer.render(scene, camera)
   requestAnimationFrame(animate)
