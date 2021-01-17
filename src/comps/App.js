@@ -38,45 +38,12 @@ controls.noPan = true
 const globe = new ThreeGlobe()
   .globeImageUrl('//i.imgur.com/Uiwi43V.png')
   .polygonsData(data.features)
-  .polygonStrokeColor(() => '#386781')
-  .polygonSideColor(() => '#ace4f9')
   .polygonAltitude(0.01)
   .polygonsTransitionDuration(500)
   .showAtmosphere(false)
   .showGraticules(true)
 
 const date = '2021-01-10'
-
-fetch('http://localhost:3001/?month=2021-01')
-  .then(res => res.json())
-  .then(res => {
-    let dateIndex = 0
-    for (let i = 0; i < res.length; i++) {
-      if (res[i].date === date) {
-        dateIndex = i
-        i = res.length
-      }
-    }
-
-    const highestCaseCountry = Object.keys(res[dateIndex].countries).sort((a, b) =>
-      parseInt(res[dateIndex].countries[b]) - parseInt(res[dateIndex].countries[a]))[0]
-    const highestCases = res[dateIndex].countries[highestCaseCountry]
-
-    const fromColor = [255, 245, 163]
-    const toColor = [193, 44, 89]
-    globe.polygonCapColor(country => {
-      const intensity = res[dateIndex].countries[country.properties.ISO_A3]
-      if (intensity) {
-        const rate = intensity / highestCases
-        const r = lerp(fromColor[0], toColor[0], rate)
-        const g = lerp(fromColor[1], toColor[1], rate)
-        const b = lerp(fromColor[2], toColor[2], rate)
-        return `rgb(${r}, ${g}, ${b})`
-      } else {
-        return '#ccc'
-      }
-    })
-  })
 
 // Set up scene
 const scene = new THREE.Scene()
@@ -120,6 +87,7 @@ export default function App () {
   const [paused, setPaused] = useState(true)
   const [delta, setDelta] = useState(null)
   let [select, setSelect] = useState(null)
+  const [month, setMonth] = useState(null)
 
   function openPopup () {
     if (!popupRef) {
@@ -224,6 +192,16 @@ export default function App () {
     return (time - start) / (end - start) * 100 + '%'
   }
 
+  useEffect(_ => {
+    // Fetch data from the db
+    const startMonth = new Date(time).toISOString().slice(0, 7)
+    fetch(`http://localhost:3001/?month=${startMonth}`)
+      .then(res => res.json())
+      .then(month => {
+        setMonth(month)
+      })
+  }, [])
+
   // simulate componentDidMount
   useEffect(_ => {
     appRef.current.prepend(renderer.domElement)
@@ -304,6 +282,57 @@ export default function App () {
       }, config.interval)
     }
   }, [paused])
+
+  // When month is updated
+  useEffect(() => {
+    if (month) {
+      console.log(new Date(time).toISOString().slice(0, 10))
+      let dateIndex = 0
+      for (let i = 0; i < month.length; i++) {
+        if (month[i].date === new Date(time).toISOString().slice(0, 10)) {
+          dateIndex = i
+          i = month.length
+        }
+      }
+      dateIndex = 28
+      const highestCaseCountry = Object.keys(month[dateIndex].countries).sort((a, b) =>
+        parseInt(month[dateIndex].countries[b]) - parseInt(month[dateIndex].countries[a]))[0]
+      const highestCases = month[dateIndex].countries[highestCaseCountry]
+
+      const fromColor = [255, 245, 163]
+      const toColor = [193, 44, 89]
+      globe.polygonCapColor(country => {
+        const intensity = month[dateIndex].countries[country.properties.ISO_A3]
+        if (intensity) {
+          const rate = intensity / highestCases
+          const r = lerp(fromColor[0], toColor[0], rate)
+          const g = lerp(fromColor[1], toColor[1], rate)
+          const b = lerp(fromColor[2], toColor[2], rate)
+          return `rgb(${r}, ${g}, ${b})`
+        } else {
+          return '#ccc'
+        }
+      })
+      globe.polygonStrokeColor(country => {
+        const intensity = month[dateIndex].countries[country.properties.ISO_A3]
+        if (intensity) {
+          const red = (intensity / highestCases) * 128
+          const green = 128 - red
+          return `rgba(${red}, ${green}, 0, 1)`
+        }
+        return 'rgba(60, 60, 60, 1)'
+      })
+      globe.polygonSideColor(country => {
+        const intensity = month[dateIndex].countries[country.properties.ISO_A3]
+        if (intensity) {
+          const red = (intensity / highestCases) * 128
+          const green = 128 - red
+          return `rgba(${red}, ${green}, 0, 1)`
+        }
+        return 'rgba(60, 60, 60, 1)'
+      })
+    }
+  }, [month])
 
   return <main className='app' ref={appRef}>
     {popup || popupExit
