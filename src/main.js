@@ -41,9 +41,6 @@ const globe = new ThreeGlobe()
         }
       }
     }
-    // const group = globe.polygonGeoJsonGeometry(country.geometry)
-    // console.log(group.children[0])
-    // group.children[0].children[0].userData.countryCode = country.properties.ISO_A3
     return 'rgba(255, 0, 0, 1)'
   })
   .polygonStrokeColor(() => '#386781')
@@ -53,15 +50,15 @@ const globe = new ThreeGlobe()
   .showAtmosphere(false)
   .showGraticules(true)
 
-const raycast = new THREE.Raycaster()
+const raycaster = new THREE.Raycaster()
+const mouse = new THREE.Vector2()
 renderer.domElement.addEventListener('click', onclick, true)
 
-function onclick () {
-  const mouse = new THREE.Vector2()
-  raycast.setFromCamera(mouse, camera)
-
-  const intersects = raycast.intersectObjects([globe.parent], true)
-  console.log(intersects)
+function onclick (evt) {
+  mouse.x = 2 * (evt.clientX / window.innerWidth) - 1
+  mouse.y = 1 - 2 * (evt.clientY / window.innerHeight)
+  raycaster.setFromCamera(mouse, camera)
+  const intersects = raycaster.intersectObjects([globe.parent], true)
   const target = intersects.find(target => target.object.geometry.type === 'ConicPolygonBufferGeometry')
   if (target) {
     console.log(target.object.parent.__data.data.properties.NAME)
