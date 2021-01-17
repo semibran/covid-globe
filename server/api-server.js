@@ -63,6 +63,7 @@ async function get (url) {
     const country = parsed.country
     const data = await db.getDb().collection('global').find({ iso_code: country })
       .project({ _id: 0, date: 1, total_cases: 1, total_vaccinations: 1 })
+      .sort({ date: 1 })
       .toArray()
     return data
   }
