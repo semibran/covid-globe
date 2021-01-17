@@ -87,12 +87,13 @@ new THREE.TextureLoader().load('//unpkg.com/three-globe/example/img/earth-water.
   globeMaterial.specular = new THREE.Color('white')
 })
 
+let flight = null
+let ms = start
+
 export default function App () {
   const [popup, setPopup] = useState(false)
   const [time, setTime] = useState(start)
   let [select, setSelect] = useState(null)
-  let flight = null
-  let ms = start
 
   function openPopup () {
     setPopup(true)
@@ -114,33 +115,36 @@ export default function App () {
           (p1[1] + p2[1]) / 2
         ]
         const coords = globe.getCoords(...center)
-
-        const point = new THREE.Vector3(coords.x, coords.y, coords.z)
-        const camdist = camera.position.length()
-
-        const { x: startX, y: startY, z: startZ } = camera.position
-        const start = new THREE.Vector3(startX, startY, startZ)
-
-        camera.position
-          .copy(point)
-          .normalize()
-          .multiplyScalar(camdist)
-
-        const { x: goalX, y: goalY, z: goalZ } = camera.position
-        const goal = new THREE.Vector3(goalX, goalY, goalZ)
-
-        camera.position
-          .copy(start)
-          .normalize()
-          .multiplyScalar(camdist)
-
-        flight = { start, goal, anim: Anim(30) }
+        flyTo(coords)
         return 0.1
       } else {
         return 0.01
       }
     })
     openPopup()
+  }
+
+  function flyTo (coords) {
+    const point = new THREE.Vector3(coords.x, coords.y, coords.z)
+    const camdist = camera.position.length()
+
+    const { x: startX, y: startY, z: startZ } = camera.position
+    const start = new THREE.Vector3(startX, startY, startZ)
+
+    camera.position
+      .copy(point)
+      .normalize()
+      .multiplyScalar(camdist)
+
+    const { x: goalX, y: goalY, z: goalZ } = camera.position
+    const goal = new THREE.Vector3(goalX, goalY, goalZ)
+
+    camera.position
+      .copy(start)
+      .normalize()
+      .multiplyScalar(camdist)
+
+    flight = { start, goal, anim: Anim(30) }
   }
 
   function deselectCountry () {
@@ -160,10 +164,9 @@ export default function App () {
       mouse.y = 1 - 2 * (evt.clientY / window.innerHeight)
       raycaster.setFromCamera(mouse, camera)
       const intersects = raycaster.intersectObjects([globe.parent], true)
-      const target = intersects.find(target => target.object.geometry.type === 'ConicPolygonBufferGeometry')
-      if (target) {
+      const target = intersects[0]
+      if (target && target.object.geometry.type === 'ConicPolygonBufferGeometry') {
         const feature = target.object.parent.__data.data
-        console.log(feature.properties.NAME)
         selectCountry(feature.properties.ISO_A3)
       } else {
         deselectCountry()
@@ -182,7 +185,6 @@ export default function App () {
       // if (!select) globe.rotation.y -= 0.005
       if (flight) {
         const t = flight.anim.update()
-        console.log(t)
         if (t === -1) {
           flight = null
         } else {
