@@ -70,7 +70,7 @@ requestAnimationFrame(function animate () {
   requestAnimationFrame(animate)
 })
 
-fetch('http://localhost:3001/?month=2020-03')
+fetch('http://localhost:3001/?month=2020-02')
   .then(res => res.json())
   .then(res => console.log(res))
 
