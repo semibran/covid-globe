@@ -49,11 +49,10 @@ const globe = new ThreeGlobe()
   .polygonStrokeColor(() => '#386781')
   .polygonSideColor(() => '#ace4f9')
   .polygonAltitude(0.01)
-  .polygonsTransitionDuration(0)
+  .polygonsTransitionDuration(500)
   .showAtmosphere(false)
   .showGraticules(true)
 
-let group
 const raycast = new THREE.Raycaster()
 renderer.domElement.addEventListener('click', onclick, true)
 
@@ -61,14 +60,18 @@ function onclick () {
   const mouse = new THREE.Vector2()
   raycast.setFromCamera(mouse, camera)
 
-  if (!group) {
-    group = globe.polygonGeoJsonGeometry(data.features[0].geometry)
-  }
-
-  const intersects = raycast.intersectObjects([group], true)
+  const intersects = raycast.intersectObjects([globe.parent], true)
+  console.log(intersects)
   const target = intersects.find(target => target.object.geometry.type === 'ConicPolygonBufferGeometry')
   if (target) {
     console.log(target.object.parent.__data.data.properties.NAME)
+    globe.polygonAltitude(country => {
+      if (country.properties.ISO_A3 === target.object.parent.__data.data.properties.ISO_A3) {
+        return 0.1
+      } else {
+        return 0.01
+      }
+    })
   }
 }
 
@@ -92,8 +95,8 @@ controls.rotateSpeed = 1.75
 controls.zoomSpeed = 0.8
 
 requestAnimationFrame(function animate () {
-  globe.rotation.y += 0.005
-  globe.rotation.x += 0.005
+  // globe.rotation.y += 0.005
+  // globe.rotation.x += 0.005
   controls.update()
   renderer.render(scene, camera)
   requestAnimationFrame(animate)
