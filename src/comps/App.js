@@ -4,7 +4,7 @@ import ThreeGlobe from 'three-globe'
 import TrackballControls from 'three-trackballcontrols'
 import lerp from 'lerp'
 import Anim from '../lib/anim'
-import { easeIn, easeOut, easeInOut } from '../lib/ease-expo'
+import { easeOut, easeInOut } from '../lib/ease-expo'
 import Popup from './Popup'
 import config from '../config'
 import data from '../data/countries.json'
@@ -44,7 +44,7 @@ const globe = new ThreeGlobe()
   .showAtmosphere(false)
   .showGraticules(true)
 
-let date = '2021-01-10'
+const date = '2021-01-10'
 
 fetch('http://localhost:3001/?month=2021-01')
   .then(res => res.json())
@@ -114,6 +114,7 @@ export default function App () {
   const [time, setTime] = useState(start)
   const [popupExit, setPopupExit] = useState(false)
   const [popup, setPopup] = useState(false)
+  const [paused, setPaused] = useState(false)
   let [select, setSelect] = useState(null)
 
   function openPopup () {
@@ -140,6 +141,10 @@ export default function App () {
     popupRef = false
     setPopup(false)
     setPopupExit(false)
+  }
+
+  function togglePaused () {
+    setPaused(!paused)
   }
 
   function selectCountry (id) {
@@ -251,7 +256,7 @@ export default function App () {
           offset = lerp(0, 320, x)
           resize()
         } else if (popupAnim.type === 'exit') {
-          const x = easeIn(1 - t)
+          const x = easeInOut(1 - t)
           offset = lerp(0, 320, x)
           resize()
         }
@@ -280,7 +285,9 @@ export default function App () {
           </div>
           <div className='player-controls'>
             <span className='icon material-icons-round'>skip_previous</span>
-            <span className='icon material-icons-round'>pause</span>
+            <span className='icon material-icons-round' onClick={togglePaused}>
+              {paused ? 'play_arrow' : 'pause'}
+            </span>
             <span className='icon material-icons-round'>skip_next</span>
           </div>
         </div>

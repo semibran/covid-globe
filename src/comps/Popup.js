@@ -25,7 +25,7 @@ export default function Popup (props) {
 
   useEffect(_ => {
     const canvas = canvasRef.current
-    const context = canvas.getContext('2d')
+    // const context = canvas.getContext('2d')
     const rect = canvas.parentNode.getBoundingClientRect()
     canvas.width = rect.width
     canvas.height = rect.height
