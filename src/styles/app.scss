@@ -71,6 +71,10 @@ body {
   margin-left: 12px;
 }
 
+.player-controls .icon:hover {
+  cursor: pointer;
+}
+
 .date {
   font-size: 2rem;
   font-weight: bold;
