@@ -108,13 +108,15 @@ let ms = start
 let popupRef = false
 let popupAnim = null
 let offset = 0
+let timeout = null
 
 export default function App () {
   const appRef = useRef(null)
   const [time, setTime] = useState(start)
   const [popupExit, setPopupExit] = useState(false)
   const [popup, setPopup] = useState(false)
-  const [paused, setPaused] = useState(false)
+  const [paused, setPaused] = useState(true)
+  const [delta, setDelta] = useState(null)
   let [select, setSelect] = useState(null)
 
   function openPopup () {
@@ -226,49 +228,66 @@ export default function App () {
       }
     }, true)
 
-    setInterval(function update () {
-      ms += config.step
-      if (ms >= end) {
-        ms = start
-      }
-      setTime(ms)
-    }, config.interval)
-
-    requestAnimationFrame(function animate () {
-      if (flight) {
-        const t = flight.anim.update()
-        if (t === -1) {
-          flight = null
-        } else {
-          const x = easeInOut(t)
-          camera.position.x = lerp(flight.start.x, flight.goal.x, x)
-          camera.position.y = lerp(flight.start.y, flight.goal.y, x)
-          camera.position.z = lerp(flight.start.z, flight.goal.z, x)
-        }
-      } else if (!select && !flight) {
-        globe.rotation.y -= 0.005
-      }
-
-      if (popupAnim) {
-        const t = popupAnim.update()
-        if (t === -1) {
-          popupAnim = null
-        } else if (popupAnim.type === 'enter') {
-          const x = easeOut(t)
-          offset = lerp(0, 320, x)
-          resize()
-        } else if (popupAnim.type === 'exit') {
-          const x = easeInOut(1 - t)
-          offset = lerp(0, 320, x)
-          resize()
-        }
-      }
-
-      controls.update()
-      renderer.render(scene, camera)
-      requestAnimationFrame(animate)
-    })
+    setPaused(false)
+    requestAnimationFrame(setDelta)
   }, [])
+
+  // handle RAF changes
+  useEffect(_ => {
+    if (flight) {
+      const t = flight.anim.update()
+      if (t === -1) {
+        flight = null
+      } else {
+        const x = easeInOut(t)
+        camera.position.x = lerp(flight.start.x, flight.goal.x, x)
+        camera.position.y = lerp(flight.start.y, flight.goal.y, x)
+        camera.position.z = lerp(flight.start.z, flight.goal.z, x)
+      }
+    } else if (!select && !flight && !paused) {
+      globe.rotation.y -= 0.005
+    }
+
+    if (popupAnim) {
+      const t = popupAnim.update()
+      if (t === -1) {
+        popupAnim = null
+      } else if (popupAnim.type === 'enter') {
+        const x = easeOut(t)
+        offset = lerp(0, 320, x)
+        resize()
+      } else if (popupAnim.type === 'exit') {
+        const x = easeInOut(1 - t)
+        offset = lerp(0, 320, x)
+        resize()
+      }
+    }
+
+    controls.update()
+    renderer.render(scene, camera)
+    requestAnimationFrame(setDelta)
+  }, [delta])
+
+  // handle pause state changes
+  useEffect(_ => {
+    if (paused) {
+      // clear timer
+      if (timeout) {
+        clearTimeout(timeout)
+        timeout = null
+      }
+    } else {
+      // start timer
+      timeout = setTimeout(function update () {
+        ms += config.step
+        if (ms >= end) {
+          ms = start
+        }
+        setTime(ms)
+        timeout = setTimeout(update, config.interval)
+      }, config.interval)
+    }
+  }, [paused])
 
   return <main className='app' ref={appRef}>
     {popup || popupExit
