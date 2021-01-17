@@ -86,6 +86,18 @@ export default function App () {
     setSelect(null)
   }
 
+  function selectCountry (id) {
+    globe.polygonAltitude(country => {
+      if (country.properties.ISO_A3 === id) {
+        return 0.1
+      } else {
+        return 0.01
+      }
+    })
+    setSelect(id)
+    openPopup()
+  }
+
   function getProgress () {
     return (time - start) / (end - start) * 100 + '%'
   }
@@ -100,15 +112,7 @@ export default function App () {
       if (target) {
         const feature = target.object.parent.__data.data
         console.log(feature.properties.NAME)
-        globe.polygonAltitude(country => {
-          if (country.properties.ISO_A3 === feature.properties.ISO_A3) {
-            return 0.1
-          } else {
-            return 0.01
-          }
-        })
-        setSelect(feature.properties.ISO_A3)
-        openPopup()
+        selectCountry(feature.properties.ISO_A3)
       } else {
         globe.polygonAltitude(0.01)
         closePopup()
@@ -139,7 +143,9 @@ export default function App () {
            style={{ width: getProgress() }}></div>
     </div>
     {popup
-      ? <Popup select={select} onChange={setSelect} onClose={closePopup} />
+      ? <Popup select={select}
+               onChange={evt => selectCountry(evt.target.value)}
+               onClose={closePopup} />
       : null}
   </main>
 }
