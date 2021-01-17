@@ -61,7 +61,9 @@ async function get (url) {
     return dataN
   } else if (parsed.country) {
     const country = parsed.country
-    const data = await db.getDb().collection('global').find({ iso_code: country }).toArray()
+    const data = await db.getDb().collection('global').find({ iso_code: country })
+      .project({ _id: 0, iso_code: 1, date: 1, total_cases: 1, total_vaccinations: 1 })
+      .toArray()
     return data
   }
 }
