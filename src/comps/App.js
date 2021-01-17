@@ -43,9 +43,11 @@ const globe = new ThreeGlobe()
   .showAtmosphere(false)
   .showGraticules(true)
 
-let date = '2021-01-10'
 
-fetch('http://localhost:3001/?month=2021-01')
+const startMonth = config.startDate.slice(0, 7)
+let date = config.startDate
+
+fetch(`http://localhost:3001/?month=${startMonth}`)
   .then(res => res.json())
   .then(res => {
     let dateIndex = 0
