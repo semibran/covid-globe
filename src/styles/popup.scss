@@ -75,7 +75,7 @@
 
 .popup-graph-wrap {
   display: grid;
-  grid-template-columns: 48px auto;
+  grid-template-columns: 64px auto;
   grid-gap: 8px;
   margin-top: 8px;
 }
@@ -88,6 +88,7 @@
 
 .popup-graph {
   position: relative;
+  display: flex;
 }
 
 .popup-graph::before {
@@ -99,6 +100,11 @@
   top: 33%;
   border-top: thin solid $silver;
   border-bottom: thin solid $silver;
+}
+
+.popup-graph canvas {
+  position: relative;
+  z-index: 1;
 }
 
 .popup-graph-vaxis {
