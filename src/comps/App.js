@@ -8,7 +8,6 @@ import { easeInOut } from '../lib/ease-expo'
 import Popup from './Popup'
 import config from '../config'
 import data from '../data/countries.json'
-import covid from '../data/covid.json'
 
 const start = Date.parse(config.startDate)
 const end = Date.parse(config.endDate)
@@ -33,6 +32,8 @@ const controls = new TrackballControls(camera, renderer.domElement)
 controls.minDistance = 150
 controls.rotateSpeed = 1.75
 controls.zoomSpeed = 0.8
+controls.maxDistance = 750
+controls.noPan = true
 
 const globe = new ThreeGlobe()
   .globeImageUrl('//i.imgur.com/Uiwi43V.png')
@@ -86,6 +87,18 @@ new THREE.TextureLoader().load('//unpkg.com/three-globe/example/img/earth-water.
   globeMaterial.specularMap = texture
   globeMaterial.specular = new THREE.Color('white')
 })
+
+// Adjust window after resize
+window.addEventListener('resize', onWindowResize, false);
+
+function onWindowResize () {
+  const aspect = window.innerWidth / window.innerHeight
+  camera.aspect = aspect
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(window.innerWidth, window.innerHeight)
+  controls.handleResize()
+}
 
 let flight = null
 let ms = start
