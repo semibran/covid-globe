@@ -220,9 +220,16 @@ export default function App () {
     {/* <h1>COVID-19 Worldwide</h1> */}
     {/* <button onClick={openPopup} className='button material-icons-round'>launch</button> */}
     <footer className='player'>
-      <div className='date'>
-        <span className='icon material-icons-round'>event_note</span>
-        {new Date(time).toGMTString().slice(5, 16)}
+      <div className='player-header'>
+        <div className='date'>
+          <span className='icon material-icons-round'>event_note</span>
+          {new Date(time).toGMTString().slice(5, 16)}
+        </div>
+        <div className='player-controls'>
+          <span className='icon material-icons-round'>skip_previous</span>
+          <span className='icon material-icons-round'>pause</span>
+          <span className='icon material-icons-round'>skip_next</span>
+        </div>
       </div>
       <div className='bar'>
         <div className='bar-progress' style={{ width: getProgress() }}></div>

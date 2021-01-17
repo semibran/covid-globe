@@ -51,6 +51,21 @@ body {
   padding: 2rem;
 }
 
+.player-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding-bottom: 1rem;
+}
+
+.player-controls {
+  display: flex;
+}
+
+.player-controls .icon + .icon {
+  margin-left: 12px;
+}
+
 .date {
   font-size: 2rem;
   font-weight: bold;
@@ -58,7 +73,6 @@ body {
   letter-spacing: 0.05rem;
   display: flex;
   align-items: center;
-  padding-bottom: 1rem;
 }
 
 .date .icon {
