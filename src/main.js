@@ -92,8 +92,8 @@ controls.rotateSpeed = 1.75
 controls.zoomSpeed = 0.8
 
 requestAnimationFrame(function animate () {
-  //globe.rotation.y += 0.005
-  //globe.rotation.x += 0.005
+  // globe.rotation.y += 0.005
+  // globe.rotation.x += 0.005
   controls.update()
   renderer.render(scene, camera)
   requestAnimationFrame(animate)
