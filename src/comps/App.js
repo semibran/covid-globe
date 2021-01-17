@@ -12,6 +12,7 @@ import countries from '../data/countries'
 
 const start = Date.parse(config.startDate)
 const end = Date.parse(config.endDate)
+let fetchData = null
 
 // Set up renderer
 const renderer = new THREE.WebGLRenderer({
@@ -81,7 +82,6 @@ const countrystate = countries.map(country => ({
   id: country.id,
   color: [204, 204, 204]
 }))
-
 
 export default function App () {
   const appRef = useRef(null)
