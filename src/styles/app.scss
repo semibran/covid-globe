@@ -28,9 +28,9 @@ body {
   }
 }
 
-.title {
+.header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   margin: 2rem;
   position: absolute;
   top: 0;
@@ -44,6 +44,13 @@ body {
     font-size: 2.5rem;
     font-weight: bold;
     letter-spacing: 0.1rem;
+  }
+
+  p {
+    color: $gray;
+    width: 680px;
+    line-height: 1.5;
+    letter-spacing: 0.05rem;
   }
 }
 

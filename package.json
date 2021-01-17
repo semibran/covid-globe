@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "Data visualization of COVID-19 around the globe",
   "repository": "semibran/covid-globe",
-  "author": "semibran (Brandon Semilla)",
+  "author": "zzzbnbzzz (Ning Ding), joshuakrauchi (Joshua Krauchi), semibran (Brandon Semilla)",
   "license": "MIT",
   "dependencies": {
     "lerp": "^1.0.3",

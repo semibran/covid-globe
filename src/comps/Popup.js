@@ -109,7 +109,7 @@ export default function Popup (props) {
       </select>
     </section>
     <section className='popup-section -graph'>
-      <h3 className='popup-heading'>Daily Change (Cases)</h3>
+      <h3 className='popup-heading'>Total Cases</h3>
       <div className='popup-graph-wrap'>
         <div className='popup-graph-vaxis'>
           <span className='popup-graph-label'>{fmtnum(cases)}</span>
@@ -129,7 +129,7 @@ export default function Popup (props) {
       </div>
     </section>
     <section className='popup-section -values'>
-      <h3 className='popup-heading'>July 12-19, 2020</h3>
+      <h3 className='popup-heading'>Stats</h3>
       <div className='popup-entries'>
         <div className='popup-entry -cases'>
           <span className='popup-prop'>Total cases</span>

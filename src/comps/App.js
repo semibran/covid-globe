@@ -340,10 +340,13 @@ export default function App () {
                />
       : null}
     <div className='overlay'>
-      <div className='title'>
+      <header className='header'>
         <img src='assets/logo.svg' />
-        <h1>COVID-19 Worldwide</h1>
-      </div>
+        <div className='titles'>
+          <h1>COVID-19 Worldwide</h1>
+          <p>All data is courtesy of the COVID-19 Data Repository by the Center of Systems Science and Engineering (CSSE) at Johns Hopkins University (JHU).</p>
+        </div>
+      </header>
       <footer className='player'>
         <div className='player-header'>
           <div className='date'>
