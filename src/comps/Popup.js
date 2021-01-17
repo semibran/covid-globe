@@ -2,19 +2,24 @@ import React from 'react'
 import type from 'prop-types'
 import countries from '../data/countries'
 
+const worldwide = {
+  id: 'WWW',
+  name: 'Worldwide'
+}
+
 Popup.propTypes = {
   select: type.string,
   onChange: type.func,
   onClose: type.func
 }
 
-export default function Popup (props) {
-  return <div className='popup'>
+export default function Popup (props, ref) {
+  return <div className='popup' ref={ref}>
     <span onClick={props.onClose} className='popup-close material-icons-round'>close</span>
     <section className='popup-section -select'>
       <h3 className='popup-heading'>Country Statistics</h3>
-      <select className='popup-select' value={props.select || ''} onChange={props.onChange}>
-        {['Worldwide', ...countries].map((country, i) =>
+      <select className='popup-select' value={props.select || 'WWW'} onChange={props.onChange}>
+        {[worldwide, ...countries].map((country, i) =>
           <option key={i} value={country.id} className='popup-option'>{country.name}</option>
         )}
       </select>

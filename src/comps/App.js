@@ -165,7 +165,7 @@ export default function App () {
       mouse.x = 2 * (evt.clientX / window.innerWidth) - 1
       mouse.y = 1 - 2 * (evt.clientY / window.innerHeight)
       raycaster.setFromCamera(mouse, camera)
-      const intersects = raycaster.intersectObjects([globe.parent], true)
+      const intersects = raycaster.intersectObjects(globe.children, true)
       const target = intersects[0]
       if (target && target.object.geometry.type === 'ConicPolygonBufferGeometry') {
         const feature = target.object.parent.__data.data
