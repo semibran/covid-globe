@@ -42,6 +42,30 @@ body {
   box-shadow: 0 2px 4px rgba($blue, 0.5);
 }
 
+.player {
+  color: $blue;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  padding: 2rem;
+}
+
+.date {
+  font-size: 2rem;
+  font-weight: bold;
+  line-height: 1;
+  letter-spacing: 0.05rem;
+  display: flex;
+  align-items: center;
+  padding-bottom: 1rem;
+}
+
+.date .icon {
+  margin-right: 8px;
+  font-size: 2rem;
+}
+
 .bar {
   background: silver;
   width: 100%;
