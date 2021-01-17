@@ -3,7 +3,7 @@
 const http = require('http')
 const db = require('./db')
 const queryString = require('query-string')
-const months = [31, 28, 31, 30, 31, 30, 31, 31, 30, 30, 31]
+const months = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
 module.exports = { listen, handler }
 
@@ -63,22 +63,24 @@ async function get (url) {
   } else if (parsed.country) {
     const country = parsed.country
     const data = await db.getDb().collection('global').find({ iso_code: country }).toArray()
-    // console.log(JSON.stringify(data))
     return data
   }
 }
 
 function normalize (data, dateM) {
-  const month = parseInt(dateM.slice(5))
+  let month = parseInt(dateM.slice(5))
+  const year = parseInt(dateM.slice(0, 4))
+  console.log(month)
+  console.log(year)
+
   let dataN = []
-  for (let i = 1; i <= months[month - 1]; i++) {
+  for (let i = (month === 2 ? 25 : 1); i <= (year % 4 === 4 ? 29 : months[month - 1]); i++) {
     if (i < 10) {
       dataN.push({ date: dateM + '-0' + i, countries: {} })
     } else {
       dataN.push({ date: dateM + '-' + i, countries: {} })
     }
   }
-
   data.forEach(element => {
     const date = element.date
     const index = dataN.indexOf(dataN.find(ele => ele.date === date))
