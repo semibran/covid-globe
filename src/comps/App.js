@@ -12,7 +12,6 @@ import countries from '../data/countries'
 
 const start = Date.parse(config.startDate)
 const end = Date.parse(config.endDate)
-let fetchData = null
 
 // Set up renderer
 const renderer = new THREE.WebGLRenderer({
