@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import type from 'prop-types'
 import countries from '../data/countries'
 
@@ -9,8 +9,17 @@ const worldwide = {
 
 let select = null
 
+function fmtnum (num) {
+  if (num > 1000000) {
+    return Math.round(num / 100000) / 10 + 'M'
+  } else {
+    return num.toLocaleString()
+  }
+}
+
 Popup.propTypes = {
   select: type.string,
+  data: type.array,
   exit: type.bool,
   onExit: type.func,
   onChange: type.func,
@@ -18,20 +27,71 @@ Popup.propTypes = {
 }
 
 export default function Popup (props) {
+  const [max, setMax] = useState(0)
+  const [vax, setVax] = useState(0)
   const canvasRef = useRef(null)
   if (props.select && props.select !== select) {
     select = props.select
   }
 
   useEffect(_ => {
+    if (!props.data) return
     const canvas = canvasRef.current
-    // const context = canvas.getContext('2d')
+    const context = canvas.getContext('2d')
     const rect = canvas.parentNode.getBoundingClientRect()
     canvas.width = rect.width
     canvas.height = rect.height
-  }, [])
 
-  return <div className={props.exit ? 'popup -exit' : 'popup'} onAnimationEnd={_ => props.exit && props.onExit()}>
+    console.log(props.data)
+
+    let max = 0
+    let vax = 0
+    for (const point of props.data) {
+      const cases = parseInt(point.total_cases)
+      const vaccs = parseInt(point.total_vaccinations)
+      if (cases > max) {
+        max = cases
+      }
+      if (vaccs > vax) {
+        vax = vaccs
+      }
+    }
+    setMax(max)
+    setVax(vax)
+
+    for (let i = 0; i < props.data.length; i++) {
+      const point = props.data[i]
+      const x = i / props.data.length * canvas.width
+      const y = (1 - parseInt(point.total_cases) / max) * canvas.height
+      if (!i) {
+        context.moveTo(x, y)
+      } else if (i === props.data.length - 1) {
+        context.lineTo(x, y)
+        context.lineTo(x + 2, y)
+      } else {
+        context.lineTo(x, y)
+      }
+    }
+    context.lineTo(canvas.width + 2, canvas.height + 2)
+    context.lineTo(0, canvas.height + 2)
+    context.strokeStyle = '#2596FF'
+    context.stroke()
+    context.fillStyle = '#2596FF'
+    context.globalAlpha = 0.5
+    context.fill()
+    context.globalAlpha = 1
+  }, [props.data])
+
+  function onEnd () {
+    if (props.exit) {
+      const canvas = canvasRef.current
+      const context = canvas.getContext('2d')
+      context.clearRect(0, 0, canvas.width, canvas.height)
+      props.onExit()
+    }
+  }
+
+  return <div className={props.exit ? 'popup -exit' : 'popup'} onAnimationEnd={onEnd}>
     <span onClick={props.onClose} className='popup-close material-icons-round'>close</span>
     <section className='popup-section -select'>
       <h3 className='popup-heading'>Country Statistics</h3>
@@ -45,8 +105,9 @@ export default function Popup (props) {
       <h3 className='popup-heading'>Daily Change (Cases)</h3>
       <div className='popup-graph-wrap'>
         <div className='popup-graph-vaxis'>
-          <span className='popup-graph-label'>10,000</span>
-          <span className='popup-graph-label'>5,000</span>
+          <span className='popup-graph-label'>{fmtnum(max)}</span>
+          <span className='popup-graph-label'>{fmtnum(Math.round(max / 3 * 2))}</span>
+          <span className='popup-graph-label'>{fmtnum(Math.round(max / 3))}</span>
           <span className='popup-graph-label'>0</span>
         </div>
         <div className='popup-graph'>
@@ -64,20 +125,20 @@ export default function Popup (props) {
       <h3 className='popup-heading'>July 12-19, 2020</h3>
       <div className='popup-entries'>
         <div className='popup-entry -cases'>
-          <span className='popup-prop'>Active cases</span>
-          <span className='popup-value'>10,100</span>
+          <span className='popup-prop'>Total cases</span>
+          <span className='popup-value'>{max.toLocaleString()}</span>
         </div>
-        <div className='popup-entry -recovers'>
+        <div className='popup-entry -deaths'>
+          <span className='popup-prop'>Total deaths</span>
+          <span className='popup-value'>{0}</span>
+        </div>
+        <div className='popup-entry -recovered'>
           <span className='popup-prop'>Recovered</span>
-          <span className='popup-value'>10,100</span>
+          <span className='popup-value'>{0}</span>
         </div>
-        <div className='popup-entry -cases-ytd'>
-          <span className='popup-prop'>Cases to date</span>
-          <span className='popup-value'>10,100</span>
-        </div>
-        <div className='popup-entry -deaths-ytd'>
-          <span className='popup-prop'>Deaths to date</span>
-          <span className='popup-value'>10,100</span>
+        <div className='popup-entry -vaccinations'>
+          <span className='popup-prop'>Vaccinations</span>
+          <span className='popup-value'>{vax.toLocaleString()}</span>
         </div>
       </div>
     </section>

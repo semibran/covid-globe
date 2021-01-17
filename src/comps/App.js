@@ -12,7 +12,6 @@ import countries from '../data/countries'
 
 const start = Date.parse(config.startDate)
 const end = Date.parse(config.endDate)
-let fetchData = null
 
 // Set up renderer
 const renderer = new THREE.WebGLRenderer({
@@ -91,9 +90,9 @@ export default function App () {
   const [paused, setPaused] = useState(true)
   const [rotate, setRotate] = useState(true)
   const [delta, setDelta] = useState(null)
-  const [stats, setStats] = useState(null)
+  const [monthlyData, setMonthlyData] = useState(null)
+  const [countryData, setCountryData] = useState(null)
   const [month, setMonth] = useState(null)
-  const [country, setCountry] = useState(null)
   let [select, setSelect] = useState(null)
 
   function openPopup () {
@@ -162,9 +161,7 @@ export default function App () {
     })
     fetch(`http://localhost:3001/?country=${id}`)
       .then(res => res.json())
-      .then((res) => { fetchData = res })
-      .then(console.log(fetchData)
-      )
+      .then(setCountryData)
     openPopup()
   }
 
@@ -231,18 +228,18 @@ export default function App () {
 
   // handle RAF changes
   useEffect(_ => {
-    if (stats && !paused) {
+    if (monthlyData && !flight && !paused) {
       const date = new Date(time).toISOString().slice(0, 10)
-      const idx = stats.indexOf(stats.find(stat => stat.date === date))
+      const idx = monthlyData.indexOf(monthlyData.find(stat => stat.date === date))
       if (idx !== -1) {
-        const highestCaseCountry = Object.keys(stats[idx].countries)
-          .sort((a, b) => parseInt(stats[idx].countries[b]) - parseInt(stats[idx].countries[a]))[0]
-        const highestCases = stats[idx].countries[highestCaseCountry]
+        const highestCaseCountry = Object.keys(monthlyData[idx].countries)
+          .sort((a, b) => parseInt(monthlyData[idx].countries[b]) - parseInt(monthlyData[idx].countries[a]))[0]
+        const highestCases = monthlyData[idx].countries[highestCaseCountry]
         if (highestCases) {
           const fromColor = [246, 242, 207]
           const toColor = [193, 44, 89]
           for (const country of countrystate) {
-            const intensity = stats[idx].countries[country.id]
+            const intensity = monthlyData[idx].countries[country.id]
             if (!intensity) continue
             const value = Math.max(0, Math.min(1, intensity / highestCases))
             country.color[0] += (lerp(fromColor[0], toColor[0], value) - country.color[0]) / 8
@@ -316,15 +313,7 @@ export default function App () {
     console.log('fetch', month)
     fetch('http://localhost:3001/?month=' + month)
       .then(res => res.json())
-      .then(setStats)
-  }, [month])
-
-  // handle country click (fetch)
-  useEffect(_ => {
-    console.log('fetch', country)
-    fetch('http://localhost:3001/?country=' + country)
-      .then(res => res.json())
-      .then(setStats)
+      .then(setMonthlyData)
   }, [month])
 
   // handle pause state changes
@@ -344,6 +333,7 @@ export default function App () {
   return <main className='app' ref={appRef}>
     {popup || popupExit
       ? <Popup select={select}
+               data={countryData}
                exit={popupExit}
                onExit={destroyPopup}
                onChange={evt => selectCountry(evt.target.value)}
