@@ -27,8 +27,9 @@ Popup.propTypes = {
 }
 
 export default function Popup (props) {
-  const [max, setMax] = useState(0)
-  const [vax, setVax] = useState(0)
+  const [cases, setCases] = useState(0)
+  const [vaccs, setVaccs] = useState(0)
+  const [deaths, setDeaths] = useState(0)
   const canvasRef = useRef(null)
   if (props.select && props.select !== select) {
     select = props.select
@@ -44,25 +45,31 @@ export default function Popup (props) {
 
     console.log(props.data)
 
-    let max = 0
-    let vax = 0
+    let maxCases = 0
+    let maxVaccs = 0
+    let maxDeaths = 0
     for (const point of props.data) {
       const cases = parseInt(point.total_cases)
       const vaccs = parseInt(point.total_vaccinations)
-      if (cases > max) {
-        max = cases
+      const deaths = parseInt(point.total_deaths)
+      if (cases > maxCases) {
+        maxCases = cases
       }
-      if (vaccs > vax) {
-        vax = vaccs
+      if (vaccs > maxVaccs) {
+        maxVaccs = vaccs
+      }
+      if (deaths > maxDeaths) {
+        maxDeaths = deaths
       }
     }
-    setMax(max)
-    setVax(vax)
+    setCases(maxCases)
+    setVaccs(maxVaccs)
+    setDeaths(maxDeaths)
 
     for (let i = 0; i < props.data.length; i++) {
       const point = props.data[i]
       const x = i / props.data.length * canvas.width
-      const y = (1 - parseInt(point.total_cases) / max) * canvas.height
+      const y = (1 - parseInt(point.total_cases) / maxCases) * canvas.height
       if (!i) {
         context.moveTo(x, y)
       } else if (i === props.data.length - 1) {
@@ -105,9 +112,9 @@ export default function Popup (props) {
       <h3 className='popup-heading'>Daily Change (Cases)</h3>
       <div className='popup-graph-wrap'>
         <div className='popup-graph-vaxis'>
-          <span className='popup-graph-label'>{fmtnum(max)}</span>
-          <span className='popup-graph-label'>{fmtnum(Math.round(max / 3 * 2))}</span>
-          <span className='popup-graph-label'>{fmtnum(Math.round(max / 3))}</span>
+          <span className='popup-graph-label'>{fmtnum(cases)}</span>
+          <span className='popup-graph-label'>{fmtnum(Math.round(cases / 3 * 2))}</span>
+          <span className='popup-graph-label'>{fmtnum(Math.round(cases / 3))}</span>
           <span className='popup-graph-label'>0</span>
         </div>
         <div className='popup-graph'>
@@ -126,11 +133,11 @@ export default function Popup (props) {
       <div className='popup-entries'>
         <div className='popup-entry -cases'>
           <span className='popup-prop'>Total cases</span>
-          <span className='popup-value'>{max.toLocaleString()}</span>
+          <span className='popup-value'>{cases.toLocaleString()}</span>
         </div>
         <div className='popup-entry -deaths'>
           <span className='popup-prop'>Total deaths</span>
-          <span className='popup-value'>{0}</span>
+          <span className='popup-value'>{deaths.toLocaleString()}</span>
         </div>
         <div className='popup-entry -recovered'>
           <span className='popup-prop'>Recovered</span>
@@ -138,7 +145,7 @@ export default function Popup (props) {
         </div>
         <div className='popup-entry -vaccinations'>
           <span className='popup-prop'>Vaccinations</span>
-          <span className='popup-value'>{vax.toLocaleString()}</span>
+          <span className='popup-value'>{vaccs.toLocaleString()}</span>
         </div>
       </div>
     </section>

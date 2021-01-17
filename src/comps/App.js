@@ -16,7 +16,7 @@ const end = Date.parse(config.endDate)
 // Set up renderer
 const renderer = new THREE.WebGLRenderer({
   alpha: true,
-  antialias: false
+  antialias: true
 })
 renderer.setSize(window.innerWidth, window.innerHeight)
 renderer.setClearColor(0xf3f3f3, 1)
@@ -159,7 +159,7 @@ export default function App () {
         return 0.01
       }
     })
-    fetch(location.origin.slice(0, -1) + 1 + '/?country=' + id)
+    fetch(location.protocol + '//' + location.hostname + ':3001/?country=' + id)
       .then(res => res.json())
       .then(setCountryData)
     openPopup()
@@ -310,7 +310,7 @@ export default function App () {
 
   // handle month changes (fetch)
   useEffect(_ => {
-    fetch(location.origin.slice(0, -1) + 1 + '/?month=' + month)
+    fetch(location.protocol + '//' + location.hostname + ':3001/?month=' + month)
       .then(res => res.json())
       .then(setMonthlyData)
   }, [month])
