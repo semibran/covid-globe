@@ -1,7 +1,9 @@
-# covid-globe
+# COVID-19 Worldwide
 > 3D data visualization of COVID-19 around the globe
 
 [Try the demo](http://covidglobe.herokuapp.com)
+
+![screenshot of COVID-19 Worldwide](./covid-globe.jpg)
 
 ## Inspiration
 COVID-19 is something that has affected all of us, each in varying amounts. Even with a vaccine being developed the threat of COVID-19 still looms large over many countries. A large contributor to the spread of the disease is underestimation of risk. We created an interactive 3D visualization of the spread of COVID-19 across the world to provide a strong visual source of how serious the impact of COVID-19 is.
@@ -17,6 +19,7 @@ Retrieving, storing, and displaying the data
 Finding reliable sources of COVID-19-related information
 
 ## Accomplishments that we're proud of
+
 
 ## What we learned
 Prioritization
