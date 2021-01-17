@@ -225,8 +225,7 @@ export default function App () {
         {new Date(time).toGMTString().slice(5, 16)}
       </div>
       <div className='bar'>
-        <div className='bar-progress'
-            style={{ width: getProgress() }}></div>
+        <div className='bar-progress' style={{ width: getProgress() }}></div>
       </div>
     </footer>
     {popup
