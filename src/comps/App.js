@@ -217,12 +217,18 @@ export default function App () {
   }, [])
 
   return <main className='app'>
-    <h1>COVID-19 Worldwide</h1>
-    <button onClick={openPopup} className='button material-icons-round'>launch</button>
-    <div className='bar'>
-      <div className='bar-progress'
-           style={{ width: getProgress() }}></div>
-    </div>
+    {/* <h1>COVID-19 Worldwide</h1> */}
+    {/* <button onClick={openPopup} className='button material-icons-round'>launch</button> */}
+    <footer className='player'>
+      <div className='date'>
+        <span className='icon material-icons-round'>event_note</span>
+        {new Date(time).toGMTString().slice(5, 16)}
+      </div>
+      <div className='bar'>
+        <div className='bar-progress'
+            style={{ width: getProgress() }}></div>
+      </div>
+    </footer>
     {popup
       ? <Popup select={select}
                onChange={evt => selectCountry(evt.target.value)}

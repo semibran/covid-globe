@@ -14,7 +14,7 @@ Popup.propTypes = {
 }
 
 export default function Popup (props, ref) {
-  return <div className='popup' ref={ref}>
+  return <div className='popup'>
     <span onClick={props.onClose} className='popup-close material-icons-round'>close</span>
     <section className='popup-section -select'>
       <h3 className='popup-heading'>Country Statistics</h3>
