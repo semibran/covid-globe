@@ -43,53 +43,55 @@ const globe = new ThreeGlobe()
   .showAtmosphere(false)
   .showGraticules(true)
 
-
-const startMonth = config.startDate.slice(0, 7)
-let date = config.startDate
-
-fetch(`http://localhost:3001/?month=${startMonth}`)
-  .then(res => res.json())
-  .then(res => {
-    let dateIndex = 0
-    for (let i = 0; i < res.length; i++) {
-      if (res[i].date === date) {
-        dateIndex = i
-        i = res.length
+// Fetch data from the db and update stats
+function fetchData(startDate) {
+  const startMonth = startDate.slice(0, 7)
+  fetch(`http://localhost:3001/?month=${startMonth}`)
+    .then(res => res.json())
+    .then(res => {
+      let dateIndex = 0
+      for (let i = 0; i < res.length; i++) {
+        if (res[i].date === startDate) {
+          dateIndex = i
+          i = res.length
+        }
       }
-    }
 
-    const highestCaseCountry = Object.keys(res[dateIndex].countries).sort((a, b) =>
-      parseInt(res[dateIndex].countries[b]) - parseInt(res[dateIndex].countries[a]))[0]
-    const highestCases = res[dateIndex].countries[highestCaseCountry]
+      const highestCaseCountry = Object.keys(res[dateIndex].countries).sort((a, b) =>
+        parseInt(res[dateIndex].countries[b]) - parseInt(res[dateIndex].countries[a]))[0]
+      const highestCases = res[dateIndex].countries[highestCaseCountry]
 
-    globe.polygonCapColor(country => {
-      const intensity = res[dateIndex].countries[country.properties.ISO_A3]
-      if (intensity) {
-        const red = (intensity / highestCases) * 255
-        const green = 255 - red
-        return `rgba(${red}, ${green}, 0, 1)`
-      }
-      return 'rgba(128, 128, 128, 1)'
+      globe.polygonCapColor(country => {
+        const intensity = res[dateIndex].countries[country.properties.ISO_A3]
+        if (intensity) {
+          const red = (intensity / highestCases) * 255
+          const green = 255 - red
+          return `rgba(${red}, ${green}, 0, 1)`
+        }
+        return 'rgba(128, 128, 128, 1)'
+      })
+      globe.polygonStrokeColor(country => {
+        const intensity = res[dateIndex].countries[country.properties.ISO_A3]
+        if (intensity) {
+          const red = (intensity / highestCases) * 128
+          const green = 128 - red
+          return `rgba(${red}, ${green}, 0, 1)`
+        }
+        return 'rgba(60, 60, 60, 1)'
+      })
+      globe.polygonSideColor(country => {
+        const intensity = res[dateIndex].countries[country.properties.ISO_A3]
+        if (intensity) {
+          const red = (intensity / highestCases) * 128
+          const green = 128 - red
+          return `rgba(${red}, ${green}, 0, 1)`
+        }
+        return 'rgba(60, 60, 60, 1)'
+      })
     })
-    globe.polygonStrokeColor(country => {
-      const intensity = res[dateIndex].countries[country.properties.ISO_A3]
-      if (intensity) {
-        const red = (intensity / highestCases) * 128
-        const green = 128 - red
-        return `rgba(${red}, ${green}, 0, 1)`
-      }
-      return 'rgba(60, 60, 60, 1)'
-    })
-    globe.polygonSideColor(country => {
-      const intensity = res[dateIndex].countries[country.properties.ISO_A3]
-      if (intensity) {
-        const red = (intensity / highestCases) * 128
-        const green = 128 - red
-        return `rgba(${red}, ${green}, 0, 1)`
-      }
-      return 'rgba(60, 60, 60, 1)'
-    })
-  })
+}
+
+fetchData(config.startDate)
 
 // Set up scene
 const scene = new THREE.Scene()
