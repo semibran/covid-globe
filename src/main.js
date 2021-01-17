@@ -28,7 +28,8 @@ camera.position.z = 400
 const globe = new ThreeGlobe()
   .globeImageUrl('//i.imgur.com/Uiwi43V.png')
   .polygonsData(data.features)
-  .polygonCapColor(country => {
+  /*.polygonCapColor(country => {
+    
     for (let i = 0; i < covid.length; i++) {
       if (country.properties.ISO_A3 === covid[i].ISO_A3) {
         const intensity = covid[i].intensity
@@ -41,17 +42,49 @@ const globe = new ThreeGlobe()
         }
       }
     }
-    // const group = globe.polygonGeoJsonGeometry(country.geometry)
-    // console.log(group.children[0])
-    // group.children[0].children[0].userData.countryCode = country.properties.ISO_A3
+    const group = globe.polygonGeoJsonGeometry(country.geometry)
+    console.log(group.children[0])
+    group.children[0].children[0].userData.countryCode = country.properties.ISO_A3
     return 'rgba(255, 0, 0, 1)'
-  })
+  })*/
   .polygonStrokeColor(() => '#386781')
   .polygonSideColor(() => '#ace4f9')
   .polygonAltitude(0.01)
   .polygonsTransitionDuration(0)
   .showAtmosphere(false)
   .showGraticules(true)
+
+let date = '2020-03-31'
+
+fetch('http://localhost:3001/?month=2020-03')
+  .then(res => res.json())
+  .then(res => {
+    let dateIndex = 0
+    for (let i = 0; i < res.length; i++) {
+      if (res[i].date === date) {
+        dateIndex = i
+        i = res.length
+      }
+    }
+
+    console.log(res[30].countries)
+
+    const highestCaseCountry = Object.keys(res[dateIndex].countries).sort((a, b) =>
+      parseInt(res[dateIndex].countries[b]) - parseInt(res[dateIndex].countries[a]))[0]
+    const highestCases = res[dateIndex].countries[highestCaseCountry]
+
+    globe.polygonCapColor(country => {
+      const intensity = res[dateIndex].countries[country.properties.ISO_A3]
+      if (intensity < highestCases * 0.1) {
+        return 'rgba(0, 255, 0, 1)'
+      } else if (intensity < highestCases * 0.25) {
+        return 'rgba(255, 255, 0, 1)'
+      } else if (intensity) {
+        return 'rgba(255, 0, 0, 1)'
+      }
+      return 'rgba(0, 0, 0, 1)'
+    })
+  })
 
 let group
 const raycast = new THREE.Raycaster()
@@ -99,9 +132,7 @@ requestAnimationFrame(function animate () {
   requestAnimationFrame(animate)
 })
 
-fetch('http://localhost:3001/?month=2020-03')
-  .then(res => res.json())
-  .then(res => console.log(res))
+
 
 // fetch('http://localhost:3001/?country=CAN')
 //   .then(res => res.json())
