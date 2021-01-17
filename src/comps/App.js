@@ -102,24 +102,28 @@ function onWindowResize () {
 
 let flight = null
 let ms = start
+let popupRef = false
 
 export default function App () {
-  const [popup, setPopup] = useState(false)
-  const [popupExit, setPopupExit] = useState(false)
   const [time, setTime] = useState(start)
+  const [popupExit, setPopupExit] = useState(false)
+  const [popup, setPopup] = useState(false)
   let [select, setSelect] = useState(null)
 
   function openPopup () {
+    popupRef = true
     setPopup(true)
     setPopupExit(false)
   }
 
   function closePopup () {
-    setPopupExit(true)
-    console.log('closing popup')
+    if (popupRef) {
+      setPopupExit(true)
+    }
   }
 
   function destroyPopup () {
+    popupRef = false
     setPopup(false)
     setPopupExit(false)
   }
