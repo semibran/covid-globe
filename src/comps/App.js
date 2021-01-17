@@ -11,6 +11,7 @@ import data from '../data/countries.json'
 
 const start = Date.parse(config.startDate)
 const end = Date.parse(config.endDate)
+let fetchData = null
 
 // Set up renderer
 const renderer = new THREE.WebGLRenderer({
@@ -74,6 +75,7 @@ let popupRef = false
 let popupAnim = null
 let offset = 0
 let timeout = null
+
 
 export default function App () {
   const appRef = useRef(null)
@@ -146,7 +148,8 @@ export default function App () {
     })
     fetch(`http://localhost:3001/?country=${id}`)
       .then(res => res.json())
-      .then(res => console.log(res))
+      .then(res => fetchData = res)
+    console.log(fetchData)
     openPopup()
   }
 
@@ -336,7 +339,9 @@ export default function App () {
                exit={popupExit}
                onExit={destroyPopup}
                onChange={evt => selectCountry(evt.target.value)}
-               onClose={deselectCountry} />
+               onClose={deselectCountry} 
+               data = {fetchData}
+               />
       : null}
     <div className='overlay'>
       <footer className='player'>

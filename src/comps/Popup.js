@@ -14,7 +14,8 @@ Popup.propTypes = {
   exit: type.bool,
   onExit: type.func,
   onChange: type.func,
-  onClose: type.func
+  onClose: type.func,
+  data: type.array
 }
 
 export default function Popup (props) {
@@ -73,7 +74,7 @@ export default function Popup (props) {
         </div>
         <div className='popup-entry -cases-ytd'>
           <span className='popup-prop'>Cases to date</span>
-          <span className='popup-value'>10,100</span>
+          <span className='popup-value'>{10}</span>
         </div>
         <div className='popup-entry -deaths-ytd'>
           <span className='popup-prop'>Deaths to date</span>
