@@ -118,12 +118,14 @@ export default function App () {
   let [select, setSelect] = useState(null)
 
   function openPopup () {
-    popupRef = true
-    setPopup(true)
-    setPopupExit(false)
-    popupAnim = {
-      type: 'enter',
-      update: Anim(30).update
+    if (!popupRef) {
+      popupRef = true
+      setPopup(true)
+      setPopupExit(false)
+      popupAnim = {
+        type: 'enter',
+        update: Anim(30).update
+      }
     }
   }
 
