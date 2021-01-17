@@ -41,9 +41,9 @@ const globe = new ThreeGlobe()
   .showAtmosphere(false)
   .showGraticules(true)
 
-let date = '2020-03-31'
+let date = '2021-01-10'
 
-fetch('http://localhost:3001/?month=2020-03')
+fetch('http://localhost:3001/?month=2021-01')
   .then(res => res.json())
   .then(res => {
     let dateIndex = 0
@@ -54,22 +54,18 @@ fetch('http://localhost:3001/?month=2020-03')
       }
     }
 
-    console.log(res[30].countries)
-
     const highestCaseCountry = Object.keys(res[dateIndex].countries).sort((a, b) =>
       parseInt(res[dateIndex].countries[b]) - parseInt(res[dateIndex].countries[a]))[0]
     const highestCases = res[dateIndex].countries[highestCaseCountry]
 
     globe.polygonCapColor(country => {
       const intensity = res[dateIndex].countries[country.properties.ISO_A3]
-      if (intensity < highestCases * 0.1) {
-        return 'rgba(0, 255, 0, 1)'
-      } else if (intensity < highestCases * 0.25) {
-        return 'rgba(255, 255, 0, 1)'
-      } else if (intensity) {
-        return 'rgba(255, 0, 0, 1)'
+      if (intensity) {
+        const red = (intensity / highestCases) * 255
+        const green = 255 - red
+        return `rgba(${red}, ${green}, 0, 1)`
       }
-      return 'rgba(0, 0, 0, 1)'
+      return 'rgba(128, 128, 128, 1)'
     })
   })
 
