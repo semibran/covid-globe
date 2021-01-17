@@ -61,14 +61,19 @@ fetch('http://localhost:3001/?month=2021-01')
       parseInt(res[dateIndex].countries[b]) - parseInt(res[dateIndex].countries[a]))[0]
     const highestCases = res[dateIndex].countries[highestCaseCountry]
 
+    const fromColor = [255, 245, 163]
+    const toColor = [193, 44, 89]
     globe.polygonCapColor(country => {
       const intensity = res[dateIndex].countries[country.properties.ISO_A3]
       if (intensity) {
-        const red = (intensity / highestCases) * 255
-        const green = 255 - red
-        return `rgba(${red}, ${green}, 0, 1)`
+        const rate = intensity / highestCases
+        const r = lerp(fromColor[0], toColor[0], rate)
+        const g = lerp(fromColor[1], toColor[1], rate)
+        const b = lerp(fromColor[2], toColor[2], rate)
+        return `rgb(${r}, ${g}, ${b})`
+      } else {
+        return '#ccc'
       }
-      return 'rgba(128, 128, 128, 1)'
     })
   })
 
