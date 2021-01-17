@@ -74,13 +74,17 @@ function normalize (data, dateM) {
   console.log(year)
 
   let dataN = []
-  for (let i = (month === 2 ? 25 : 1); i <= (year % 4 === 4 ? 29 : months[month - 1]); i++) {
+  for (let i = 1;
+    i <= (month === 2 && year % 4 === 0 ? 29 : months[month - 1]);
+    i++) {
     if (i < 10) {
       dataN.push({ date: dateM + '-0' + i, countries: {} })
     } else {
       dataN.push({ date: dateM + '-' + i, countries: {} })
     }
   }
+  console.log(dataN)
+
   data.forEach(element => {
     const date = element.date
     const index = dataN.indexOf(dataN.find(ele => ele.date === date))
