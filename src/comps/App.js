@@ -5,7 +5,6 @@ import TrackballControls from 'three-trackballcontrols'
 import Popup from './Popup'
 import config from '../config'
 import data from '../data/countries.json'
-import covid from '../data/covid.json'
 
 const start = Date.parse(config.startDate)
 const end = Date.parse(config.endDate)
