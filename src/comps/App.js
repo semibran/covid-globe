@@ -8,6 +8,7 @@ import { easeOut, easeInOut } from '../lib/ease-expo'
 import Popup from './Popup'
 import config from '../config'
 import data from '../data/countries.json'
+import countries from '../data/countries'
 
 const start = Date.parse(config.startDate)
 const end = Date.parse(config.endDate)
@@ -37,6 +38,7 @@ controls.noPan = true
 const globe = new ThreeGlobe()
   .globeImageUrl('//i.imgur.com/Uiwi43V.png')
   .polygonsData(data.features)
+  .polygonCapColor(() => '#cccccc')
   .polygonStrokeColor(() => '#386781')
   .polygonSideColor(() => '#ace4f9')
   .polygonAltitude(0.01)
@@ -75,6 +77,10 @@ let popupRef = false
 let popupAnim = null
 let offset = 0
 let timeout = null
+const countrystate = countries.map(country => ({
+  id: country.id,
+  color: [204, 204, 204]
+}))
 
 export default function App () {
   const appRef = useRef(null)
@@ -120,6 +126,7 @@ export default function App () {
   }
 
   function gotoStart () {
+    globe.rotation.y = 0
     setTime(start)
     setPaused(true)
   }
@@ -212,6 +219,37 @@ export default function App () {
 
   // handle RAF changes
   useEffect(_ => {
+    if (stats && !paused) {
+      const date = new Date(time).toISOString().slice(0, 10)
+      const idx = stats.indexOf(stats.find(stat => stat.date === date))
+      if (idx !== -1) {
+        const highestCaseCountry = Object.keys(stats[idx].countries)
+          .sort((a, b) => parseInt(stats[idx].countries[b]) - parseInt(stats[idx].countries[a]))[0]
+        const highestCases = stats[idx].countries[highestCaseCountry]
+        if (highestCases) {
+          const fromColor = [246, 242, 207]
+          const toColor = [193, 44, 89]
+          for (const country of countrystate) {
+            const intensity = stats[idx].countries[country.id]
+            if (!intensity) continue
+            const value = Math.max(0, Math.min(1, intensity / highestCases))
+            country.color[0] += (lerp(fromColor[0], toColor[0], value) - country.color[0]) / 8
+            country.color[1] += (lerp(fromColor[1], toColor[1], value) - country.color[1]) / 8
+            country.color[2] += (lerp(fromColor[2], toColor[2], value) - country.color[2]) / 8
+          }
+          globe.polygonCapColor(feature => {
+            const country = countrystate.find(country => country.id === feature.properties.ISO_A3)
+            if (country) {
+              return 'rgb(' + country.color.join(',') + ')'
+            } else {
+              console.log('no feature for ', feature.properties.NAME)
+              return 'black'
+            }
+          })
+        }
+      }
+    }
+
     if (flight) {
       const t = flight.anim.update()
       if (t === -1) {
@@ -248,38 +286,15 @@ export default function App () {
 
   // handle timestamp changes
   useEffect(_ => {
+    if (time > end) return setTime(start)
     const newMonth = new Date(time).toISOString().slice(0, 7)
     if (month !== newMonth) {
       setMonth(newMonth)
-    } else if (stats && !flight) {
-      let idx = 0
-      for (let i = 0; i < stats.length; i++) {
-        if (stats[i].date === new Date(time).toISOString().slice(0, 10)) {
-          idx = i
-          break
-        }
-      }
-
-      const highestCaseCountry = Object.keys(stats[idx].countries)
-        .sort((a, b) => parseInt(stats[idx].countries[b]) - parseInt(stats[idx].countries[a]))[0]
-      const highestCases = stats[idx].countries[highestCaseCountry]
-
-      const fromColor = [255, 245, 163]
-      const toColor = [193, 44, 89]
-      globe.polygonCapColor(country => {
-        const intensity = stats[idx].countries[country.properties.ISO_A3]
-        if (intensity) {
-          const rate = intensity / highestCases
-          const r = lerp(fromColor[0], toColor[0], rate)
-          const g = lerp(fromColor[1], toColor[1], rate)
-          const b = lerp(fromColor[2], toColor[2], rate)
-          return `rgb(${r}, ${g}, ${b})`
-        } else {
-          return '#ccc'
-        }
-      })
     }
-    timeout = setTimeout(_ => setTime(time + config.step), config.interval)
+
+    if (!paused) {
+      timeout = setTimeout(_ => setTime(time + config.step), config.interval)
+    }
   }, [time])
 
   // handle month changes (fetch)
