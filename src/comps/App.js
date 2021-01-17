@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import * as THREE from 'three'
 import ThreeGlobe from 'three-globe'
 import TrackballControls from 'three-trackballcontrols'
 import lerp from 'lerp'
 import Anim from '../lib/anim'
-import { easeInOut } from '../lib/ease-expo'
+import { easeIn, easeOut, easeInOut } from '../lib/ease-expo'
 import Popup from './Popup'
 import config from '../config'
 import data from '../data/countries.json'
@@ -19,7 +19,6 @@ const renderer = new THREE.WebGLRenderer({
 })
 renderer.setSize(window.innerWidth, window.innerHeight)
 renderer.setClearColor(0xf3f3f3, 1)
-document.body.appendChild(renderer.domElement)
 
 // Set up camera
 const camera = new THREE.PerspectiveCamera()
@@ -89,22 +88,24 @@ new THREE.TextureLoader().load('//unpkg.com/three-globe/example/img/earth-water.
 })
 
 // Adjust window after resize
-window.addEventListener('resize', onWindowResize, false);
-
-function onWindowResize () {
-  const aspect = window.innerWidth / window.innerHeight
+function resize () {
+  const width = window.innerWidth - offset
+  const aspect = width / window.innerHeight
   camera.aspect = aspect
-  camera.updateProjectionMatrix();
+  camera.updateProjectionMatrix()
 
-  renderer.setSize(window.innerWidth, window.innerHeight)
+  renderer.setSize(width, window.innerHeight)
   controls.handleResize()
 }
 
 let flight = null
 let ms = start
 let popupRef = false
+let popupAnim = null
+let offset = 0
 
 export default function App () {
+  const appRef = useRef(null)
   const [time, setTime] = useState(start)
   const [popupExit, setPopupExit] = useState(false)
   const [popup, setPopup] = useState(false)
@@ -114,11 +115,19 @@ export default function App () {
     popupRef = true
     setPopup(true)
     setPopupExit(false)
+    popupAnim = {
+      type: 'enter',
+      update: Anim(30).update
+    }
   }
 
   function closePopup () {
     if (popupRef) {
       setPopupExit(true)
+      popupAnim = {
+        type: 'exit',
+        update: Anim(15).update
+      }
     }
   }
 
@@ -185,9 +194,14 @@ export default function App () {
     return (time - start) / (end - start) * 100 + '%'
   }
 
+  // simulate componentDidMount
   useEffect(_ => {
+    appRef.current.prepend(renderer.domElement)
+
+    window.addEventListener('resize', resize)
+
     renderer.domElement.addEventListener('click', function onclick (evt) {
-      mouse.x = 2 * (evt.clientX / window.innerWidth) - 1
+      mouse.x = 2 * (evt.clientX / (window.innerWidth - offset)) - 1
       mouse.y = 1 - 2 * (evt.clientY / window.innerHeight)
       raycaster.setFromCamera(mouse, camera)
       const intersects = raycaster.intersectObjects(globe.children, true)
@@ -222,31 +236,29 @@ export default function App () {
       } else if (!select && !flight) {
         globe.rotation.y -= 0.005
       }
+
+      if (popupAnim) {
+        const t = popupAnim.update()
+        if (t === -1) {
+          popupAnim = null
+        } else if (popupAnim.type === 'enter') {
+          const x = easeOut(t)
+          offset = lerp(0, 320, x)
+          resize()
+        } else if (popupAnim.type === 'exit') {
+          const x = easeIn(1 - t)
+          offset = lerp(0, 320, x)
+          resize()
+        }
+      }
+
       controls.update()
       renderer.render(scene, camera)
       requestAnimationFrame(animate)
     })
   }, [])
 
-  return <main className='app'>
-    {/* <h1>COVID-19 Worldwide</h1> */}
-    {/* <button onClick={openPopup} className='button material-icons-round'>launch</button> */}
-    <footer className='player'>
-      <div className='player-header'>
-        <div className='date'>
-          <span className='icon material-icons-round'>event_note</span>
-          {new Date(time).toGMTString().slice(5, 16)}
-        </div>
-        <div className='player-controls'>
-          <span className='icon material-icons-round'>skip_previous</span>
-          <span className='icon material-icons-round'>pause</span>
-          <span className='icon material-icons-round'>skip_next</span>
-        </div>
-      </div>
-      <div className='bar'>
-        <div className='bar-progress' style={{ width: getProgress() }}></div>
-      </div>
-    </footer>
+  return <main className='app' ref={appRef}>
     {popup || popupExit
       ? <Popup select={select}
                exit={popupExit}
@@ -254,5 +266,23 @@ export default function App () {
                onChange={evt => selectCountry(evt.target.value)}
                onClose={deselectCountry} />
       : null}
+    <div className='overlay'>
+      <footer className='player'>
+        <div className='player-header'>
+          <div className='date'>
+            <span className='icon material-icons-round'>event_note</span>
+            {new Date(time).toGMTString().slice(5, 16)}
+          </div>
+          <div className='player-controls'>
+            <span className='icon material-icons-round'>skip_previous</span>
+            <span className='icon material-icons-round'>pause</span>
+            <span className='icon material-icons-round'>skip_next</span>
+          </div>
+        </div>
+        <div className='bar'>
+          <div className='bar-progress' style={{ width: getProgress() }}></div>
+        </div>
+      </footer>
+    </div>
   </main>
 }
