@@ -45,6 +45,7 @@ async function handler (req, res) {
   }
 }
 
+// query mongodb
 async function get (url) {
   const location = url.slice(1)
   const parsed = queryString.parse(location)
@@ -60,11 +61,15 @@ async function get (url) {
     return dataN
   } else if (parsed.country) {
     const country = parsed.country
-    const data = await db.getDb().collection('global').find({ iso_code: country }).toArray()
+    const data = await db.getDb().collection('global').find({ iso_code: country })
+      .project({ _id: 0, date: 1, total_cases: 1, total_vaccinations: 1 })
+      .sort({ date: 1 })
+      .toArray()
     return data
   }
 }
 
+// data normalization
 function normalize (data, dateM) {
   const month = parseInt(dateM.slice(5))
   const year = parseInt(dateM.slice(0, 4))

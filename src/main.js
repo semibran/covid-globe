@@ -1,11 +1,6 @@
-import * as THREE from 'three'
-import ThreeGlobe from 'three-globe'
-import TrackballControls from 'three-trackballcontrols'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import App from './comps/App'
-import data from './data/countries.json'
-import covid from './data/covid.json'
 
 ReactDOM.render(<App/>, document.getElementById('root'))
 
