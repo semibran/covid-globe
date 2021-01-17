@@ -283,14 +283,15 @@ export default function App () {
   // When month is updated
   useEffect(() => {
     if (month) {
+      console.log(new Date(time).toISOString().slice(0, 10))
       let dateIndex = 0
       for (let i = 0; i < month.length; i++) {
-        if (month[i].date === config.startDate) {
+        if (month[i].date === new Date(time).toISOString().slice(0, 10)) {
           dateIndex = i
           i = month.length
         }
       }
-
+      dateIndex = 28
       const highestCaseCountry = Object.keys(month[dateIndex].countries).sort((a, b) =>
         parseInt(month[dateIndex].countries[b]) - parseInt(month[dateIndex].countries[a]))[0]
       const highestCases = month[dateIndex].countries[highestCaseCountry]
