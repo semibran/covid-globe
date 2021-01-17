@@ -159,7 +159,7 @@ export default function App () {
         return 0.01
       }
     })
-    fetch(location.origin.slice(0, -1) + '/?country=' + id)
+    fetch(location.origin.slice(0, -1) + 1 + '/?country=' + id)
       .then(res => res.json())
       .then(setCountryData)
     openPopup()
