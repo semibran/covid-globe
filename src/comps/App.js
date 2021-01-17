@@ -4,7 +4,6 @@ import config from '../config'
 
 const start = Date.parse(config.startDate)
 const end = Date.parse(config.endDate)
-console.log((end - start) / config.step)
 
 export default function App () {
   const [popup, setPopup] = useState(false)
@@ -26,6 +25,9 @@ export default function App () {
   useEffect(_ => {
     setInterval(function update () {
       ms += config.step
+      if (ms >= end) {
+        ms = start
+      }
       setTime(ms)
     }, config.interval)
   }, [])

@@ -27,7 +27,7 @@ camera.position.z = 400
 const globe = new ThreeGlobe()
   .globeImageUrl('//unpkg.com/three-globe/example/img/earth-water.png')
   .polygonsData(data.features)
-  .polygonCapColor((country) => {
+  .polygonCapColor(country => {
     for (let i = 0; i < covid.length; i++) {
       if (country.properties.ISO_A3 === covid[i].ISO_A3) {
         const intensity = covid[i].intensity
@@ -40,6 +40,9 @@ const globe = new ThreeGlobe()
         }
       }
     }
+    // const group = globe.polygonGeoJsonGeometry(country.geometry)
+    // console.log(group.children[0])
+    // group.children[0].children[0].userData.countryCode = country.properties.ISO_A3
     return 'rgba(255, 0, 0, 1)'
   })
   .polygonStrokeColor(() => '#386781')
@@ -47,7 +50,26 @@ const globe = new ThreeGlobe()
   .polygonAltitude(0.01)
   .polygonsTransitionDuration(0)
   .showAtmosphere(false)
-  // .showGraticules(true)
+  .showGraticules(true)
+
+let group
+const raycast = new THREE.Raycaster()
+renderer.domElement.addEventListener('click', onclick, true)
+
+function onclick () {
+  const mouse = new THREE.Vector2()
+  raycast.setFromCamera(mouse, camera)
+
+  if (!group) {
+    group = globe.polygonGeoJsonGeometry(data.features[0].geometry)
+  }
+
+  const intersects = raycast.intersectObjects([group], true)
+  const target = intersects.find(target => target.object.geometry.type === 'ConicPolygonBufferGeometry')
+  if (target) {
+    console.log(target.object.parent.__data.data.properties.NAME)
+  }
+}
 
 const globeMaterial = globe.globeMaterial()
 globeMaterial.bumpScale = 10
@@ -75,9 +97,9 @@ requestAnimationFrame(function animate () {
   requestAnimationFrame(animate)
 })
 
-fetch('http://localhost:3001/?month=2020-03')
-  .then(res => res.json())
-  .then(res => console.log(res))
+// fetch('http://localhost:3001/?month=2020-03')
+//   .then(res => res.json())
+//   .then(res => console.log(res))
 
 // fetch('http://localhost:3001/?country=CAN')
 //   .then(res => res.json())
