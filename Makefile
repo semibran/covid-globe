@@ -27,7 +27,8 @@ start: clean js css html assets
 	node server --watch src,shared \
 	--js "$(MAKE) js" \
 	--scss "$(MAKE) css" \
-	--html "$(MAKE) html"
+	--html "$(MAKE) html" \
+	--svg "$(MAKE) assets"
 
 clean:
 	rm -rf public

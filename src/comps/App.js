@@ -341,7 +341,10 @@ export default function App () {
                />
       : null}
     <div className='overlay'>
-      <h1>COVID-19 Worldwide</h1>
+      <div className='title'>
+        <img src='assets/logo.svg' />
+        <h1>COVID-19 Worldwide</h1>
+      </div>
       <footer className='player'>
         <div className='player-header'>
           <div className='date'>
