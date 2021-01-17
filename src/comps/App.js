@@ -93,6 +93,7 @@ export default function App () {
   const [delta, setDelta] = useState(null)
   const [stats, setStats] = useState(null)
   const [month, setMonth] = useState(null)
+  const [country, setCountry] = useState(null)
   let [select, setSelect] = useState(null)
 
   function openPopup () {
@@ -318,6 +319,14 @@ export default function App () {
       .then(setStats)
   }, [month])
 
+  // handle country click (fetch)
+  useEffect(_ => {
+    console.log('fetch', country)
+    fetch('http://localhost:3001/?country=' + country)
+      .then(res => res.json())
+      .then(setStats)
+  }, [month])
+
   // handle pause state changes
   useEffect(_ => {
     if (paused) {
@@ -339,7 +348,6 @@ export default function App () {
                onExit={destroyPopup}
                onChange={evt => selectCountry(evt.target.value)}
                onClose={deselectCountry}
-               data = {fetchData}
                />
       : null}
     <div className='overlay'>
