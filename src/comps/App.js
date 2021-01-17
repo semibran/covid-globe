@@ -347,6 +347,7 @@ export default function App () {
     {popup || popupExit
       ? <Popup select={select}
                data={countryData}
+               time={time}
                exit={popupExit}
                onExit={destroyPopup}
                onChange={evt => selectCountry(evt.target.value)}

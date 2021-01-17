@@ -20,6 +20,7 @@ function fmtnum (num) {
 Popup.propTypes = {
   select: type.string,
   data: type.array,
+  time: type.number,
   exit: type.bool,
   onExit: type.func,
   onChange: type.func,
@@ -27,6 +28,7 @@ Popup.propTypes = {
 }
 
 export default function Popup (props) {
+  const [maxCases, setMaxCases] = useState(0)
   const [cases, setCases] = useState(0)
   const [vaccs, setVaccs] = useState(0)
   const [deaths, setDeaths] = useState(0)
@@ -38,41 +40,47 @@ export default function Popup (props) {
   useEffect(_ => {
     if (!props.data) return
     const canvas = canvasRef.current
-    const context = canvas.getContext('2d')
     const rect = canvas.parentNode.getBoundingClientRect()
     canvas.width = rect.width
     canvas.height = rect.height
+  }, [props.data])
 
-    console.log(props.data)
+  useEffect(_ => {
+    if (!props.data) return
+    const canvas = canvasRef.current
+    const date = new Date(props.time).toISOString().slice(0, 10)
+    const node = props.data.find(node => node.date === date)
+    if (node) {
+      setCases(parseInt(node.total_cases || 0))
+      setVaccs(parseInt(node.total_vaccinations || 0))
+      setDeaths(parseInt(node.total_deaths || 0))
+      plotData(canvas, props.data.slice(0, props.data.indexOf(node)))
+    }
+  }, [props.time])
+
+  function plotData (canvas, data) {
+    const context = canvas.getContext('2d')
+    context.clearRect(0, 0, canvas.width, canvas.height)
+    context.beginPath()
 
     let maxCases = 0
-    let maxVaccs = 0
-    let maxDeaths = 0
-    for (const point of props.data) {
+    for (const point of data) {
       const cases = parseInt(point.total_cases)
-      const vaccs = parseInt(point.total_vaccinations)
-      const deaths = parseInt(point.total_deaths)
       if (cases > maxCases) {
         maxCases = cases
       }
-      if (vaccs > maxVaccs) {
-        maxVaccs = vaccs
-      }
-      if (deaths > maxDeaths) {
-        maxDeaths = deaths
-      }
     }
-    setCases(maxCases)
-    setVaccs(maxVaccs)
-    setDeaths(maxDeaths)
+    setMaxCases(maxCases)
 
-    for (let i = 0; i < props.data.length; i++) {
-      const point = props.data[i]
-      const x = i / props.data.length * canvas.width
-      const y = (1 - parseInt(point.total_cases) / maxCases) * canvas.height
+    for (let i = 0; i < data.length; i++) {
+      const node = data[i]
+      const x = i / data.length * canvas.width
+      const y = maxCases
+        ? (1 - parseInt(node.total_cases || 0) / maxCases) * canvas.height
+        : canvas.height
       if (!i) {
         context.moveTo(x, y)
-      } else if (i === props.data.length - 1) {
+      } else if (i === data.length - 1) {
         context.lineTo(x, y)
         context.lineTo(x + 2, y)
       } else {
@@ -87,7 +95,8 @@ export default function Popup (props) {
     context.globalAlpha = 0.5
     context.fill()
     context.globalAlpha = 1
-  }, [props.data])
+    context.closePath()
+  }
 
   function onEnd () {
     if (props.exit) {
@@ -112,9 +121,9 @@ export default function Popup (props) {
       <h3 className='popup-heading'>Total Cases</h3>
       <div className='popup-graph-wrap'>
         <div className='popup-graph-vaxis'>
-          <span className='popup-graph-label'>{fmtnum(cases)}</span>
-          <span className='popup-graph-label'>{fmtnum(Math.round(cases / 3 * 2))}</span>
-          <span className='popup-graph-label'>{fmtnum(Math.round(cases / 3))}</span>
+          <span className='popup-graph-label'>{fmtnum(maxCases)}</span>
+          <span className='popup-graph-label'>{fmtnum(Math.round(maxCases / 3 * 2))}</span>
+          <span className='popup-graph-label'>{fmtnum(Math.round(maxCases / 3))}</span>
           <span className='popup-graph-label'>0</span>
         </div>
         <div className='popup-graph'>
@@ -122,7 +131,7 @@ export default function Popup (props) {
         </div>
         <div></div>
         <div className='popup-graph-haxis'>
-          <span className='popup-graph-label'>May 29</span>
+          <span className='popup-graph-label'>{props.data && new Date(Date.parse(props.data[0].date)).toGMTString().slice(5, 11)}</span>
           <span className='popup-graph-label'>July 11</span>
           <span className='popup-graph-label'>Sep 08</span>
         </div>
