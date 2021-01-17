@@ -29,6 +29,15 @@ const globe = new ThreeGlobe()
   .globeImageUrl('//i.imgur.com/Uiwi43V.png')
   .polygonsData(data.features)
   .polygonCapColor((country) => {
+
+
+
+
+
+
+
+
+    
     for (let i = 0; i < covid.length; i++) {
       if (country.properties.ISO_A3 === covid[i].ISO_A3) {
         const intensity = covid[i].intensity
@@ -63,14 +72,15 @@ controls.rotateSpeed = 1.75
 controls.zoomSpeed = 0.8
 
 requestAnimationFrame(function animate () {
-  globe.rotation.y += 0.005
-  globe.rotation.x += 0.005
+  //globe.rotation.y += 0.005
+  //globe.rotation.x += 0.005
   controls.update()
   renderer.render(scene, camera)
   requestAnimationFrame(animate)
 })
 
-fetch('http://localhost:3001/?month=2020-02')
+
+fetch('http://localhost:3001/?country=CAN')
   .then(res => res.json())
   .then(res => console.log(res))
 
