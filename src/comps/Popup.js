@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import type from 'prop-types'
 import countries from '../data/countries'
+import config from '../config'
 
 const worldwide = {
   id: 'WWW',
@@ -107,6 +108,10 @@ export default function Popup (props) {
     }
   }
 
+  function toHumanDate (date) {
+    return new Date(date).toGMTString().slice(5, 11)
+  }
+
   return <div className={props.exit ? 'popup -exit' : 'popup'} onAnimationEnd={onEnd}>
     <span onClick={props.onClose} className='popup-close material-icons-round'>close</span>
     <section className='popup-section -select'>
@@ -131,9 +136,9 @@ export default function Popup (props) {
         </div>
         <div></div>
         <div className='popup-graph-haxis'>
-          <span className='popup-graph-label'>{props.data && new Date(Date.parse(props.data[0].date)).toGMTString().slice(5, 11)}</span>
-          <span className='popup-graph-label'>July 11</span>
-          <span className='popup-graph-label'>Sep 08</span>
+          <span className='popup-graph-label'>{props.data && toHumanDate(Date.parse(config.startDate))}</span>
+          <span className='popup-graph-label'>{props.data && toHumanDate(Math.floor((props.time + Date.parse(config.startDate)) / 2))}</span>
+          <span className='popup-graph-label'>{props.data && toHumanDate(props.time)}</span>
         </div>
       </div>
     </section>
