@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import * as THREE from 'three'
 import ThreeGlobe from 'three-globe'
 import TrackballControls from 'three-trackballcontrols'
 import lerp from 'lerp'
 import Anim from '../lib/anim'
-import { easeInOut } from '../lib/ease-expo'
+import { easeOut, easeInOut } from '../lib/ease-expo'
 import Popup from './Popup'
 import config from '../config'
 import data from '../data/countries.json'
@@ -19,7 +19,6 @@ const renderer = new THREE.WebGLRenderer({
 })
 renderer.setSize(window.innerWidth, window.innerHeight)
 renderer.setClearColor(0xf3f3f3, 1)
-document.body.appendChild(renderer.domElement)
 
 // Set up camera
 const camera = new THREE.PerspectiveCamera()
@@ -43,6 +42,8 @@ const globe = new ThreeGlobe()
   .showAtmosphere(false)
   .showGraticules(true)
 
+const date = '2021-01-10'
+
 // Set up scene
 const scene = new THREE.Scene()
 scene.add(globe)
@@ -59,32 +60,73 @@ new THREE.TextureLoader().load('//unpkg.com/three-globe/example/img/earth-water.
 })
 
 // Adjust window after resize
-window.addEventListener('resize', onWindowResize, false);
-
-function onWindowResize () {
-  const aspect = window.innerWidth / window.innerHeight
+function resize () {
+  const width = window.innerWidth - offset
+  const aspect = width / window.innerHeight
   camera.aspect = aspect
-  camera.updateProjectionMatrix();
+  camera.updateProjectionMatrix()
 
-  renderer.setSize(window.innerWidth, window.innerHeight)
+  renderer.setSize(width, window.innerHeight)
   controls.handleResize()
 }
 
 let flight = null
 let ms = start
+let popupRef = false
+let popupAnim = null
+let offset = 0
+let timeout = null
 
 export default function App () {
-  const [popup, setPopup] = useState(false)
+  const appRef = useRef(null)
   const [time, setTime] = useState(start)
+  const [popupExit, setPopupExit] = useState(false)
+  const [popup, setPopup] = useState(false)
+  const [paused, setPaused] = useState(true)
+  const [delta, setDelta] = useState(null)
   let [select, setSelect] = useState(null)
   const [month, setMonth] = useState(null)
 
   function openPopup () {
-    setPopup(true)
+    if (!popupRef) {
+      popupRef = true
+      setPopup(true)
+      setPopupExit(false)
+      popupAnim = {
+        type: 'enter',
+        update: Anim(30).update
+      }
+    }
   }
 
   function closePopup () {
+    if (popupRef) {
+      setPopupExit(true)
+      popupAnim = {
+        type: 'exit',
+        update: Anim(15).update
+      }
+    }
+  }
+
+  function destroyPopup () {
+    popupRef = false
     setPopup(false)
+    setPopupExit(false)
+  }
+
+  function togglePaused () {
+    setPaused(!paused)
+  }
+
+  function gotoStart () {
+    setTime(start)
+    setPaused(true)
+  }
+
+  function gotoEnd () {
+    setTime(end)
+    setPaused(true)
   }
 
   function selectCountry (id) {
@@ -145,8 +187,23 @@ export default function App () {
   }
 
   useEffect(_ => {
+    // Fetch data from the db
+    const startMonth = new Date(time).toISOString().slice(0, 7)
+    fetch(`http://localhost:3001/?month=${startMonth}`)
+      .then(res => res.json())
+      .then(month => {
+        setMonth(month)
+      })
+  }, [])
+
+  // simulate componentDidMount
+  useEffect(_ => {
+    appRef.current.prepend(renderer.domElement)
+
+    window.addEventListener('resize', resize)
+
     renderer.domElement.addEventListener('click', function onclick (evt) {
-      mouse.x = 2 * (evt.clientX / window.innerWidth) - 1
+      mouse.x = 2 * (evt.clientX / (window.innerWidth - offset)) - 1
       mouse.y = 1 - 2 * (evt.clientY / window.innerHeight)
       raycaster.setFromCamera(mouse, camera)
       const intersects = raycaster.intersectObjects(globe.children, true)
@@ -159,42 +216,68 @@ export default function App () {
       }
     }, true)
 
-    // Fetch data from the db
-    const startMonth = new Date(time).toISOString().slice(0, 7)
-    fetch(`http://localhost:3001/?month=${startMonth}`)
-      .then(res => res.json())
-      .then(month => {
-        setMonth(month)
-      })
-
-    setInterval(function update () {
-      ms += config.step
-      if (ms >= end) {
-        ms = start
-      }
-      setTime(ms)
-    }, config.interval)
-
-    requestAnimationFrame(function animate () {
-      if (flight) {
-        const t = flight.anim.update()
-        if (t === -1) {
-          flight = null
-        } else {
-          const x = easeInOut(t)
-          camera.position.x = lerp(flight.start.x, flight.goal.x, x)
-          camera.position.y = lerp(flight.start.y, flight.goal.y, x)
-          camera.position.z = lerp(flight.start.z, flight.goal.z, x)
-        }
-      } else if (!select && !flight) {
-        globe.rotation.y -= 0.0015
-      }
-      controls.update()
-      renderer.render(scene, camera)
-      requestAnimationFrame(animate)
-    })
+    setPaused(false)
+    requestAnimationFrame(setDelta)
   }, [])
 
+  // handle RAF changes
+  useEffect(_ => {
+    if (flight) {
+      const t = flight.anim.update()
+      if (t === -1) {
+        flight = null
+      } else {
+        const x = easeInOut(t)
+        camera.position.x = lerp(flight.start.x, flight.goal.x, x)
+        camera.position.y = lerp(flight.start.y, flight.goal.y, x)
+        camera.position.z = lerp(flight.start.z, flight.goal.z, x)
+      }
+    } else if (!select && !flight && !paused) {
+      globe.rotation.y -= 0.005
+    }
+
+    if (popupAnim) {
+      const t = popupAnim.update()
+      if (t === -1) {
+        popupAnim = null
+      } else if (popupAnim.type === 'enter') {
+        const x = easeOut(t)
+        offset = lerp(0, 320, x)
+        resize()
+      } else if (popupAnim.type === 'exit') {
+        const x = easeInOut(1 - t)
+        offset = lerp(0, 320, x)
+        resize()
+      }
+    }
+
+    controls.update()
+    renderer.render(scene, camera)
+    requestAnimationFrame(setDelta)
+  }, [delta])
+
+  // handle pause state changes
+  useEffect(_ => {
+    if (paused) {
+      // clear timer
+      if (timeout) {
+        clearTimeout(timeout)
+        timeout = null
+      }
+    } else {
+      // start timer
+      timeout = setTimeout(function update () {
+        ms += config.step
+        if (ms >= end) {
+          ms = start
+        }
+        setTime(ms)
+        timeout = setTimeout(update, config.interval)
+      }, config.interval)
+    }
+  }, [paused])
+
+  // When month is updated
   useEffect(() => {
     if (month) {
       let dateIndex = 0
@@ -209,14 +292,19 @@ export default function App () {
         parseInt(month[dateIndex].countries[b]) - parseInt(month[dateIndex].countries[a]))[0]
       const highestCases = month[dateIndex].countries[highestCaseCountry]
 
+      const fromColor = [255, 245, 163]
+      const toColor = [193, 44, 89]
       globe.polygonCapColor(country => {
         const intensity = month[dateIndex].countries[country.properties.ISO_A3]
         if (intensity) {
-          const red = (intensity / highestCases) * 255
-          const green = 255 - red
-          return `rgba(${red}, ${green}, 0, 1)`
+          const rate = intensity / highestCases
+          const r = lerp(fromColor[0], toColor[0], rate)
+          const g = lerp(fromColor[1], toColor[1], rate)
+          const b = lerp(fromColor[2], toColor[2], rate)
+          return `rgb(${r}, ${g}, ${b})`
+        } else {
+          return '#ccc'
         }
-        return 'rgba(128, 128, 128, 1)'
       })
       globe.polygonStrokeColor(country => {
         const intensity = month[dateIndex].countries[country.properties.ISO_A3]
@@ -239,23 +327,37 @@ export default function App () {
     }
   }, [month])
 
-  return <main className='app'>
-    {/* <h1>COVID-19 Worldwide</h1> */}
-    {/* <button onClick={openPopup} className='button material-icons-round'>launch</button> */}
-    <footer className='player'>
-      <div className='date'>
-        <span className='icon material-icons-round'>event_note</span>
-        {new Date(time).toGMTString().slice(5, 16)}
-      </div>
-      <div className='bar'>
-        <div className='bar-progress'
-            style={{ width: getProgress() }}></div>
-      </div>
-    </footer>
-    {popup
+  return <main className='app' ref={appRef}>
+    {popup || popupExit
       ? <Popup select={select}
+               exit={popupExit}
+               onExit={destroyPopup}
                onChange={evt => selectCountry(evt.target.value)}
                onClose={deselectCountry} />
       : null}
+    <div className='overlay'>
+      <footer className='player'>
+        <div className='player-header'>
+          <div className='date'>
+            <span className='icon material-icons-round'>event_note</span>
+            {new Date(time).toGMTString().slice(5, 16)}
+          </div>
+          <div className='player-controls'>
+            <span className='icon material-icons-round' onClick={gotoStart}>
+              skip_previous
+            </span>
+            <span className='icon material-icons-round' onClick={togglePaused}>
+              {paused ? 'play_arrow' : 'pause'}
+            </span>
+            <span className='icon material-icons-round' onClick={gotoEnd}>
+              skip_next
+            </span>
+          </div>
+        </div>
+        <div className='bar'>
+          <div className='bar-progress' style={{ width: getProgress() }}></div>
+        </div>
+      </footer>
+    </div>
   </main>
 }
